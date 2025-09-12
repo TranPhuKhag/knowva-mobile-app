@@ -1,0 +1,42 @@
+# Android Studio / Gradle
+.gradle/
+**/build/
+local.properties
+
+# Keep Gradle Wrapper (đừng bỏ qua file này)
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ/Android Studio
+.idea/
+*.iml
+
+# NDK / CMake
+.cxx/
+.externalNativeBuild/
+
+# Output artifacts
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+
+# Legacy generated dirs (nếu có)
+bin/
+gen/
+out/
+
+# Logs & captures
+captures/
+*.log
+*.hprof
+
+# Keystores (Tuyệt đối không commit)
+*.jks
+*.keystore
+
+# Misc
+.navigation/
+.DS_Store
+Thumbs.db
