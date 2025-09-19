@@ -8,6 +8,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.prm392.knowva_mobile.ui.LoginActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -18,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
+            startActivity(new android.content.Intent(this, LoginActivity.class));
+            finish();
             return insets;
         });
     }
