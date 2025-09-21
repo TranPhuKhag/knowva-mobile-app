@@ -8,7 +8,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.prm392.knowva_mobile.ui.LoginActivity;
+import com.prm392.knowva_mobile.view.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
