@@ -64,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
                     String token = response.body().getToken();
                     saveToken(token);
                     Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(intent);
                     finish();
