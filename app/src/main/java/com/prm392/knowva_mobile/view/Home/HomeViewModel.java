@@ -1,11 +1,10 @@
-package com.prm392.knowva_mobile.features.home.presentation.viewmodel;
+package com.prm392.knowva_mobile.view.Home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.prm392.knowva_mobile.data.model.FlashcardSet;
-import com.prm392.knowva_mobile.features.home.presentation.state.HomeScreenItem;
+import com.prm392.knowva_mobile.model.FlashcardSet;
 // import com.example.app.data.model.FlashcardSet; // Import model của bạn
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class HomeViewModel extends ViewModel {
         // TODO: Thêm dữ liệu thật cho recentSets và recommendedSets
 
         // 1. Thêm Banner
-        items.add(new HomeScreenItem.Banner("Van Hao", 7, 25, 50));
+        items.add(new HomeScreenItem.Banner("Nguoi dung", 7, 25, 50));
 
         // 2. Thêm Carousel
         items.add(new HomeScreenItem.ContinueLearning(recentSets));

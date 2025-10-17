@@ -1,4 +1,4 @@
-package com.prm392.knowva_mobile.features.home.presentation.ui.adapter;
+package com.prm392.knowva_mobile.view.Home;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,40 +10,34 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.prm392.knowva_mobile.R;
-import com.prm392.knowva_mobile.features.home.presentation.state.HomeScreenItem;
+import com.prm392.knowva_mobile.view.Home.HomeScreenItem;
 
 import java.util.List;
 
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    // Các hằng số để xác định loại view
     private static final int TYPE_BANNER = 0;
     private static final int TYPE_CONTINUE_LEARNING = 1;
-    private static final int TYPE_HEADER = 2;
-    private static final int TYPE_AUTHORS = 3;
+    private static final int TYPE_AUTHORS = 2;
+    private static final int TYPE_HEADER = 3;
     private static final int TYPE_RECOMMENDED = 4;
-
 
     private List<HomeScreenItem> items;
 
     public void setItems(List<HomeScreenItem> newItems) {
         this.items = newItems;
-        notifyDataSetChanged(); // Nên dùng DiffUtil để hiệu năng tốt hơn
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemViewType(int position) {
         HomeScreenItem item = items.get(position);
-        if (item instanceof HomeScreenItem.Banner) {
-            return TYPE_BANNER;
-        } else if (item instanceof HomeScreenItem.ContinueLearning) {
-            return TYPE_CONTINUE_LEARNING;
-        } else if (item instanceof HomeScreenItem.Header) {
-            return TYPE_HEADER;
-        } else if (item instanceof HomeScreenItem.Authors) {
-            return TYPE_AUTHORS;
-        } else if (item instanceof HomeScreenItem.RecommendedSet) {
-            return TYPE_RECOMMENDED;
-        }
+        if (item instanceof HomeScreenItem.Banner) return TYPE_BANNER;
+        if (item instanceof HomeScreenItem.ContinueLearning) return TYPE_CONTINUE_LEARNING;
+        if (item instanceof HomeScreenItem.Authors) return TYPE_AUTHORS;
+        if (item instanceof HomeScreenItem.Header) return TYPE_HEADER;
+        if (item instanceof HomeScreenItem.RecommendedSet) return TYPE_RECOMMENDED;
         return -1;
     }
 
@@ -55,11 +49,11 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case TYPE_BANNER:
                 return new BannerViewHolder(inflater.inflate(R.layout.item_home_banner, parent, false));
             case TYPE_CONTINUE_LEARNING:
-                return new ContinueLearningCarouselViewHolder(inflater.inflate(R.layout.item_home_carousel, parent, false));
+            case TYPE_AUTHORS:
+                // Sử dụng layout chung cho cả hai loại danh sách ngang
+                return new HorizontalCarouselViewHolder(inflater.inflate(R.layout.item_horizontal_carousel, parent, false));
             case TYPE_HEADER:
                 return new HeaderViewHolder(inflater.inflate(R.layout.item_home_header, parent, false));
-            case TYPE_AUTHORS:
-                return  new AuthorsViewHolder(inflater.inflate(R.layout.item_home_authors, parent, false));
             case TYPE_RECOMMENDED:
                 return new RecommendedSetViewHolder(inflater.inflate(R.layout.item_recommended_set, parent, false));
             default:
@@ -70,16 +64,24 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         HomeScreenItem item = items.get(position);
-        if (holder instanceof BannerViewHolder) {
-            ((BannerViewHolder) holder).bind((HomeScreenItem.Banner) item);
-        } else if (holder instanceof ContinueLearningCarouselViewHolder) {
-            ((ContinueLearningCarouselViewHolder) holder).bind((HomeScreenItem.ContinueLearning) item);
-        } else if (holder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) holder).bind((HomeScreenItem.Header) item);
-        } else if (holder instanceof AuthorsViewHolder) {
-            ((AuthorsViewHolder) holder).bind((HomeScreenItem.Authors) item);
-        } else if (holder instanceof RecommendedSetViewHolder) {
-            ((RecommendedSetViewHolder) holder).bind((HomeScreenItem.RecommendedSet) item);
+        switch (holder.getItemViewType()) {
+            case TYPE_BANNER:
+                ((BannerViewHolder) holder).bind((HomeScreenItem.Banner) item);
+                break;
+            case TYPE_CONTINUE_LEARNING:
+                // Ép kiểu về ViewHolder chung và truyền dữ liệu tương ứng
+                ((HorizontalCarouselViewHolder) holder).bindContinueLearning((HomeScreenItem.ContinueLearning) item);
+                break;
+            case TYPE_AUTHORS:
+                // Ép kiểu về ViewHolder chung và truyền dữ liệu tương ứng
+                ((HorizontalCarouselViewHolder) holder).bindAuthors((HomeScreenItem.Authors) item);
+                break;
+            case TYPE_HEADER:
+                ((HeaderViewHolder) holder).bind((HomeScreenItem.Header) item);
+                break;
+            case TYPE_RECOMMENDED:
+                ((RecommendedSetViewHolder) holder).bind((HomeScreenItem.RecommendedSet) item);
+                break;
         }
     }
 
@@ -88,16 +90,14 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return items == null ? 0 : items.size();
     }
 
-    // --- CÁC VIEWHOLDER (Nên tách ra các file riêng trong package `viewholder`) ---
+    // --- ViewHolder Classes ---
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {
-        // BƯỚC 1: Khai báo các biến cho View
         TextView tvGreeting, tvStreak, tvProgressText;
         ProgressBar pbDailyGoal;
 
         BannerViewHolder(@NonNull View itemView) {
             super(itemView);
-            // BƯỚC 2: Tìm và gán các View từ layout bằng ID
             tvGreeting = itemView.findViewById(R.id.tv_greeting);
             tvStreak = itemView.findViewById(R.id.tv_streak);
             tvProgressText = itemView.findViewById(R.id.tv_progress_text);
@@ -105,8 +105,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void bind(HomeScreenItem.Banner bannerItem) {
-            // BƯỚC 3: Gán dữ liệu từ item vào các View tương ứng
-            String greetingText = "Chào buổi tối, " + bannerItem.userName + "!";
+            String greetingText = "Chào bạn, " + bannerItem.userName + "!";
             String streakText = "Chuỗi " + bannerItem.streak + " ngày học 🔥";
             String progressText = bannerItem.dailyProgress + "/" + bannerItem.dailyGoal + " thẻ";
 
@@ -118,31 +117,28 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    static class ContinueLearningCarouselViewHolder extends RecyclerView.ViewHolder {
+    // ViewHolder chung cho các danh sách cuộn ngang
+    static class HorizontalCarouselViewHolder extends RecyclerView.ViewHolder {
         RecyclerView horizontalRecyclerView;
-        ContinueLearningCarouselViewHolder(@NonNull View itemView) {
+        HorizontalCarouselViewHolder(@NonNull View itemView) {
             super(itemView);
-            horizontalRecyclerView = itemView.findViewById(R.id.rv_horizontal_sets);
+            horizontalRecyclerView = itemView.findViewById(R.id.rv_horizontal_list);
         }
-        void bind(HomeScreenItem.ContinueLearning item) {
-            horizontalRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
-            // TODO: Tạo một adapter mới (ví dụ: `HorizontalSetAdapter`) cho RecyclerView này
-            // HorizontalSetAdapter adapter = new HorizontalSetAdapter(item.sets);
-            // horizontalRecyclerView.setAdapter(adapter);
-        }
-    }
 
-    static class AuthorsViewHolder extends RecyclerView.ViewHolder {
-        RecyclerView horizontalRecyclerView;
-        AuthorsViewHolder(@NonNull View itemView) {
-            super(itemView);
-            horizontalRecyclerView = itemView.findViewById(R.id.rv_horizontal_sets);
-        }
-        void bind(HomeScreenItem.Authors item) {
+        // Phương thức để bind dữ liệu "Continue Learning"
+        void bindContinueLearning(HomeScreenItem.ContinueLearning item) {
             horizontalRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
-            // TODO: Tạo một adapter mới (ví dụ: `HorizontalSetAdapter`) cho RecyclerView này
-            // HorizontalSetAdapter adapter = new HorizontalSetAdapter(item.sets);
-            // horizontalRecyclerView.setAdapter(adapter);
+            // SỬ DỤNG ADAPTER MỚI
+            HorizontalSetAdapter adapter = new HorizontalSetAdapter(item.sets);
+            horizontalRecyclerView.setAdapter(adapter);
+        }
+
+        // Phương thức để bind dữ liệu "Authors"
+        void bindAuthors(HomeScreenItem.Authors item) {
+            horizontalRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            // SỬ DỤNG ADAPTER MỚI
+            HorizontalSetAdapter adapter = new HorizontalSetAdapter(item.sets);
+            horizontalRecyclerView.setAdapter(adapter);
         }
     }
 
@@ -158,8 +154,17 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class RecommendedSetViewHolder extends RecyclerView.ViewHolder {
-        // ... Khai báo view
-        RecommendedSetViewHolder(@NonNull View itemView) { super(itemView); }
-        void bind(HomeScreenItem.RecommendedSet item) { /* ... Gán dữ liệu */ }
+        TextView tvTitle, tvSetDetails;
+        RecommendedSetViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvTitle = itemView.findViewById(R.id.tv_set_title);
+            tvSetDetails = itemView.findViewById(R.id.tv_set_details);
+        }
+        void bind(HomeScreenItem.RecommendedSet item) {
+            // SỬA LẠI PHẦN BIND DỮ LIỆU
+            tvTitle.setText(item.set.getTitle());
+            String details = item.set.getCardCount() + " thuật ngữ";
+            tvSetDetails.setText(details);
+        }
     }
 }
