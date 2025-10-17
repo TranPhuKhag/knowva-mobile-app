@@ -3,17 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_add"
-        android:title="Tạo mới"
-        android:contentDescription="Tạo học phần mới"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="Tìm kiếm"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
     <item
-        android:id="@+id/action_profile"
-        android:icon="@drawable/ic_account_circle"
-        android:title="Hồ sơ"
-        android:contentDescription="Xem hồ sơ"
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_add"
+        android:title="Thêm"
         app:showAsAction="ifRoom" />
 
 </menu>

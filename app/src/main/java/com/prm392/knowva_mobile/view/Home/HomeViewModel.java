@@ -31,7 +31,7 @@ public class HomeViewModel extends ViewModel {
         // TODO: Thêm dữ liệu thật cho recentSets và recommendedSets
 
         // 1. Thêm Banner
-        items.add(new HomeScreenItem.Banner("Van Hao", 7, 25, 50));
+        items.add(new HomeScreenItem.Banner("Nguoi dung", 7, 25, 50));
 
         // 2. Thêm Carousel
         items.add(new HomeScreenItem.ContinueLearning(recentSets));

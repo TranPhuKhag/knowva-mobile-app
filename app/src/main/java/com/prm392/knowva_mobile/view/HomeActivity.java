@@ -1,7 +1,9 @@
 package com.prm392.knowva_mobile.view;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -75,6 +77,49 @@ public class HomeActivity extends AppCompatActivity {
         homeRepository = new HomeRepository();
         setupRecyclerView();
         loadData();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_toolbar_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Xử lý khi người dùng nhấn enter hoặc nút tìm kiếm
+                Toast.makeText(HomeActivity.this, "Đang tìm: " + query, Toast.LENGTH_SHORT).show();
+
+                // Chuyển sang trang kết quả tìm kiếm
+                // Intent intent = new Intent(HomeActivity.this, SearchResultActivity.class);
+                // intent.putExtra("SEARCH_QUERY", query);
+                // startActivity(intent);
+
+                searchView.clearFocus(); // Ẩn bàn phím
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Xử lý khi người dùng thay đổi văn bản (nếu cần)
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_add) {
+            Toast.makeText(this, "Chuyển sang trang tạo Flashcard", Toast.LENGTH_SHORT).show();
+            // Intent intent = new Intent(this, CreateFlashcardActivity.class);
+            // startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupRecyclerView() {

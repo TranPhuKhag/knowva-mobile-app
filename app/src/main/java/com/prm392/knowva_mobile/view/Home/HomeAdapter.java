@@ -105,7 +105,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void bind(HomeScreenItem.Banner bannerItem) {
-            String greetingText = "Chào buổi tối, " + bannerItem.userName + "!";
+            String greetingText = "Chào bạn, " + bannerItem.userName + "!";
             String streakText = "Chuỗi " + bannerItem.streak + " ngày học 🔥";
             String progressText = bannerItem.dailyProgress + "/" + bannerItem.dailyGoal + " thẻ";
 
