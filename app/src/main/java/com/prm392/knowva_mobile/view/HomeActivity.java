@@ -1,95 +1,104 @@
 package com.prm392.knowva_mobile.view;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.prm392.knowva_mobile.R;
-import com.prm392.knowva_mobile.features.home.presentation.ui.adapter.HomeAdapter;
-import com.prm392.knowva_mobile.features.home.presentation.viewmodel.HomeViewModel;
+import com.prm392.knowva_mobile.repository.HomeRepository;
+import com.prm392.knowva_mobile.view.Home.HomeAdapter;
+import com.prm392.knowva_mobile.view.Home.HomeScreenItem;
+
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private HomeViewModel viewModel;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private MaterialToolbar topAppBar;
     private RecyclerView recyclerView;
     private HomeAdapter homeAdapter;
-    private MaterialToolbar topAppBar;
+    private HomeRepository homeRepository;
+    private ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Gắn layout cho Activity này
         setContentView(R.layout.activity_home);
 
-        // --- Tìm và thiết lập Toolbar ---
+        // --- Ánh xạ các view từ layout ---
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
         topAppBar = findViewById(R.id.topAppBar);
-        setSupportActionBar(topAppBar); // Đặt toolbar này làm action bar chính
+        recyclerView = findViewById(R.id.rv_home_activity);
 
-        // Bắt sự kiện click cho icon menu (hamburger icon)
-        topAppBar.setNavigationOnClickListener(v -> {
-            // Xử lý mở menu ở đây, ví dụ: mở Navigation Drawer
-            Toast.makeText(this, "Menu icon clicked!", Toast.LENGTH_SHORT).show();
+        // --- Thiết lập Toolbar và Navigation Drawer ---
+        setSupportActionBar(topAppBar);
+        // Dòng này sẽ tự động kết nối icon 3 gạch với sidebar
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, topAppBar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // --- Xử lý sự kiện click item trong sidebar ---
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                Toast.makeText(HomeActivity.this, "Trang chủ", Toast.LENGTH_SHORT).show();
+            } else if (itemId == R.id.nav_profile) {
+                Toast.makeText(HomeActivity.this, "Hồ sơ", Toast.LENGTH_SHORT).show();
+            } else if (itemId == R.id.nav_settings) {
+                Toast.makeText(HomeActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();
+            } else if (itemId == R.id.nav_logout) {
+                Toast.makeText(HomeActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+                // Ví dụ: quay về màn hình Login
+                // Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                // startActivity(intent);
+                // finish();
+            }
+            // Đóng sidebar sau khi click
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
 
-        // 1. Tìm RecyclerView từ layout
-        recyclerView = findViewById(R.id.rv_home_activity); // Dùng ID mới để tránh nhầm lẫn
-
-        // 2. Khởi tạo ViewModel
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
-        // 3. Setup RecyclerView và Adapter
+        // --- Khởi tạo và hiển thị dữ liệu cho RecyclerView ---
+        homeRepository = new HomeRepository();
         setupRecyclerView();
-
-        // 4. Lắng nghe dữ liệu từ ViewModel
-        observeViewModel();
-    }
-
-    // PHƯƠNG THỨC NÀY ĐỂ XỬ LÝ CLICK VÀO CÁC ICON TRÊN TOOLBAR
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int itemId = item.getItemId();
-
-        if (itemId == R.id.action_add) {
-            // Xử lý khi nhấn nút dấu cộng
-            Toast.makeText(this, "Nút dấu cộng được nhấn!", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (itemId == R.id.action_profile) {
-            // Xử lý khi nhấn nút avatar
-            Toast.makeText(this, "Nút avatar được nhấn!", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.home_toolbar_menu, menu);
-        return true;
+        loadData();
     }
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        homeAdapter = new HomeAdapter(); // Dùng lại HomeAdapter đã có
+        homeAdapter = new HomeAdapter();
         recyclerView.setAdapter(homeAdapter);
     }
 
-    private void observeViewModel() {
-        viewModel.getHomeItems().observe(this, homeScreenItems -> {
-            if (homeScreenItems != null) {
-                homeAdapter.setItems(homeScreenItems);
-            }
-        });
+    private void loadData() {
+        List<HomeScreenItem> items = homeRepository.getHomeItems();
+        homeAdapter.setItems(items);
     }
+
+    // --- Xử lý nút back của hệ thống (quan trọng) ---
+    // Nếu sidebar đang mở, nhấn back sẽ đóng sidebar thay vì thoát app
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    // Các phương thức xử lý menu trên Toolbar (action_add, action_profile) có thể giữ nguyên
+    // nếu bạn vẫn muốn chúng hiển thị trên Toolbar.
 }

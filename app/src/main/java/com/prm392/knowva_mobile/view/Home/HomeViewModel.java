@@ -1,11 +1,10 @@
-package com.prm392.knowva_mobile.features.home.presentation.viewmodel;
+package com.prm392.knowva_mobile.view.Home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.prm392.knowva_mobile.data.model.FlashcardSet;
-import com.prm392.knowva_mobile.features.home.presentation.state.HomeScreenItem;
+import com.prm392.knowva_mobile.model.FlashcardSet;
 // import com.example.app.data.model.FlashcardSet; // Import model của bạn
 
 import java.util.ArrayList;
