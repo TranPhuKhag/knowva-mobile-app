@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.prm392.knowva_mobile.R;
+import com.prm392.knowva_mobile.model.User;
 import com.prm392.knowva_mobile.model.response.AuthResponse;
 import com.prm392.knowva_mobile.model.request.SignIn;
 import com.prm392.knowva_mobile.repository.AuthRepository;
@@ -60,9 +61,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    AuthResponse authResponse = response.body();
+                    User user = authResponse.getUser();
                     // Lấy token từ đối tượng AuthResponse
                     String token = response.body().getToken();
-                    saveToken(token);
+                    saveUserInfo(token, user);
                     Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(intent);
@@ -79,10 +82,19 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void saveToken(String token) {
+    private void saveUserInfo(String token, User user) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Lưu token
         editor.putString("access_token", token);
+
+        // Lưu thêm thông tin của User (nếu user không null)
+        if (user != null) {
+            editor.putString("user_name", user.getUsername());
+            editor.putString("user_email", user.getEmail());
+            // Bạn có thể lưu thêm bất kỳ thông tin nào khác từ User object
+        }
         editor.apply();
     }
 }

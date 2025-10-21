@@ -14,4 +14,7 @@ public interface AuthService {
 
     @POST("register") // Endpoint mới
     Call<AuthResponse> signUp(@Body SignUp signUp);
+
+    @POST("logout")
+    Call<Void> logout();
 }
