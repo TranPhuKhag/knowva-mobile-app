@@ -26,4 +26,8 @@ public class AuthRepository {
     public Call<AuthResponse> signUp(SignUp account){
         return authService.signUp(account);
     }
+
+    public Call<Void> logout() {
+        return authService.logout();
+    }
 }

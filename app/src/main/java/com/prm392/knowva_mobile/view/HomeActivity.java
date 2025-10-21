@@ -1,5 +1,7 @@
 package com.prm392.knowva_mobile.view;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,14 +19,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 import com.prm392.knowva_mobile.R;
+import com.prm392.knowva_mobile.repository.AuthRepository;
 import com.prm392.knowva_mobile.repository.HomeRepository;
 import com.prm392.knowva_mobile.view.Home.HomeAdapter;
 import com.prm392.knowva_mobile.view.Home.HomeScreenItem;
 
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeActivity extends AppCompatActivity {
 
+    private AuthRepository   authRepository; // Khai báo AuthRepository
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private MaterialToolbar topAppBar;
@@ -37,6 +45,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // --- THÊM DÒNG NÀY ĐỂ KHẮC PHỤC LỖI ---
+        authRepository = new AuthRepository(this);
+        // ------------------------------------
 
         // --- Ánh xạ các view từ layout ---
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -62,11 +74,7 @@ public class HomeActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_settings) {
                 Toast.makeText(HomeActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.nav_logout) {
-                Toast.makeText(HomeActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
-                // Ví dụ: quay về màn hình Login
-                // Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                // startActivity(intent);
-                // finish();
+                 performLogout();
             }
             // Đóng sidebar sau khi click
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -142,6 +150,38 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void performLogout() {
+        authRepository.logout().enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                // Dù API thành công hay thất bại (vd: token đã hết hạn),
+                // chúng ta đều cần xóa dữ liệu local và đưa người dùng về trang đăng nhập.
+                clearLocalDataAndGoToLogin();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                // Nếu có lỗi mạng, cũng tiến hành đăng xuất ở local
+                Toast.makeText(HomeActivity.this, "Lỗi mạng, đăng xuất...", Toast.LENGTH_SHORT).show();
+                clearLocalDataAndGoToLogin();
+            }
+        });
+    }
+
+    private void clearLocalDataAndGoToLogin() {
+        // Xóa toàn bộ dữ liệu trong SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+        // Chuyển về màn hình Login và xóa hết các Activity cũ
+        Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish(); // Đóng HomeActivity
     }
 
     // Các phương thức xử lý menu trên Toolbar (action_add, action_profile) có thể giữ nguyên
