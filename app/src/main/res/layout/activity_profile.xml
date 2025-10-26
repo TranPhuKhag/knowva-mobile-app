@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.ProfileActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_profile"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_menu"
+            app:title="Hồ sơ người dùng" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/iv_profile_avatar"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop"
+                tools:src="@mipmap/ic_launcher_round" />
+
+            <TextView
+                style="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thông tin cá nhân" />
+
+            <TextView android:id="@+id/tv_profile_fullname" style="@style/ProfileField" tools:text="Họ tên: Trần Văn Hào" />
+            <TextView android:id="@+id/tv_profile_email" style="@style/ProfileField" tools:text="Email: tranvanhao@email.com" />
+            <TextView android:id="@+id/tv_profile_phone" style="@style/ProfileField" tools:text="SĐT: 0123456789" />
+            <TextView android:id="@+id/tv_profile_birthdate" style="@style/ProfileField" tools:text="Ngày sinh: 01/01/2000" />
+            <TextView android:id="@+id/tv_profile_gender" style="@style/ProfileField" tools:text="Giới tính: Nam" />
+
+            <TextView
+                style="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tài khoản" />
+
+            <TextView android:id="@+id/tv_profile_verified" style="@style/ProfileField" tools:text="Xác thực: Đã xác thực" />
+            <TextView android:id="@+id/tv_profile_role" style="@style/ProfileField" tools:text="Vai trò: REGULAR" />
+            <TextView android:id="@+id/tv_profile_vip" style="@style/ProfileField" tools:text="Ngày VIP còn lại: 30" />
+
+            <TextView
+                style="@style/TextAppearance.Material3.TitleMedium"
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thống kê" />
+
+            <TextView android:id="@+id/tv_stats_fc_sets" style="@style/ProfileField" tools:text="Bộ Flashcard: 10" />
+            <TextView android:id="@+id/tv_stats_q_sets" style="@style/ProfileField" tools:text="Bộ Quiz: 5" />
+            <TextView android:id="@+id/tv_stats_fc_attempts" style="@style/ProfileField" tools:text="Lượt học Flashcard: 100" />
+            <TextView android:id="@+id/tv_stats_q_attempts" style="@style/ProfileField" tools:text="Lượt làm Quiz: 50" />
+            <TextView android:id="@+id/tv_stats_avg_score" style="@style/ProfileField" tools:text="Điểm Quiz TB: 8.5" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

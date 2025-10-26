@@ -15,6 +15,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.bumptech.glide.Glide;
+import com.prm392.knowva_mobile.manager.SessionManager;
 
 import android.widget.Toast;
 
@@ -44,6 +49,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeAdapter homeAdapter;
     private HomeRepository homeRepository;
     private ActionBarDrawerToggle toggle;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +57,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         // Khởi tạo AuthRepository
+        sessionManager = new SessionManager(this);
         authRepository = new AuthRepository(this);
 
         // Ánh xạ View
@@ -66,13 +73,16 @@ public class HomeActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        updateNavHeader();
+
         // Sidebar menu event
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 Toast.makeText(HomeActivity.this, "Trang chủ", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.nav_profile) {
-                Toast.makeText(HomeActivity.this, "Hồ sơ", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(intent);
             } else if (itemId == R.id.nav_settings) {
                 Toast.makeText(HomeActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.nav_logout) {
@@ -118,6 +128,31 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    // --- HÀM MỚI ĐỂ CẬP NHẬT HEADER ---
+    private void updateNavHeader() {
+        View headerView = navigationView.getHeaderView(0); // Lấy header view
+        TextView tvUserName = headerView.findViewById(R.id.tv_user_name);
+        TextView tvUserEmail = headerView.findViewById(R.id.tv_user_email);
+        ImageView ivAvatar = headerView.findViewById(R.id.iv_avatar);
+
+        // Lấy thông tin từ SessionManager
+        String name = sessionManager.getFullName();
+        String email = sessionManager.getEmail();
+        String avatarUrl = sessionManager.getAvatarUrl();
+
+        // Cập nhật TextViews
+        tvUserName.setText(name);
+        tvUserEmail.setText(email);
+
+        // Cập nhật Avatar dùng Glide
+        Glide.with(this)
+                .load(avatarUrl) // URL lấy từ session
+                .placeholder(R.mipmap.ic_launcher_round) // Ảnh mặc định khi đang tải
+                .error(R.mipmap.ic_launcher_round) // Ảnh mặc định nếu lỗi
+                .circleCrop() // Bo tròn ảnh
+                .into(ivAvatar);
     }
 
     @Override
@@ -171,10 +206,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void clearLocalDataAndGoToLogin() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
+        sessionManager.logoutUser();
 
         Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

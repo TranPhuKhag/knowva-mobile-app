@@ -27,6 +27,7 @@
         <activity android:name=".view.flashcard.MyFlashcardsActivity" />
         <activity android:name=".view.flashcard.CreateSetActivity" />
         <activity android:name=".view.flashcard.CreateSetMetaActivity" />
+        <activity android:name=".view.ProfileActivity" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
