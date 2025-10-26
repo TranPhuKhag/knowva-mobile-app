@@ -56,8 +56,9 @@ public class MyFlashcardsActivity extends AppCompatActivity {
                 return true;
             }
             if (id == R.id.menu_bottom_flashcard) {
-                // Đang ở màn này rồi, không làm gì
-                return true;
+                // Hiện FlashcardBottomSheet
+                new FlashcardBottomSheet().show(getSupportFragmentManager(), "FlashcardBottomSheet");
+                return false;
             }
             if (id == R.id.menu_bottom_quiz) {
                 Toast.makeText(this, "Quiz", Toast.LENGTH_SHORT).show();
