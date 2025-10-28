@@ -57,4 +57,7 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // Thêm Splash Screen API
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
