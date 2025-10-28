@@ -1,8 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Knowvamobile" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
+    </style>
+
+    <style name="Theme.Knowvamobile" parent="Base.Theme.Knowvamobile" />
+
+    <!-- TextInputLayout kiểu filled -->
+    <style name="Widget.Knowva.FilledInput" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/surface_variant</item>
+        <item name="boxStrokeColor">@color/outline</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="hintTextColor">@color/on_surface_variant</item>
+    </style>
+
+    <!-- Nút Login -->
+    <style name="Widget.Knowva.LoginButton" parent="Widget.Material3.Button">
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <!-- Shape Appearance Overlay base (cần có để tránh lỗi) -->
+    <style name="ShapeAppearanceOverlay.Knowva" parent="">
+        <item name="cornerFamily">rounded</item>
+    </style>
+
+    <!-- Overlay bo pill cho Nút Login -->
+    <style name="ShapeAppearanceOverlay.Knowva.Pill">
+        <item name="cornerSize">28dp</item>
     </style>
 
     <style name="ProfileField" parent="Widget.AppCompat.TextView">
@@ -13,6 +43,4 @@
         <item name="android:paddingStart">8dp</item>
         <item name="android:paddingEnd">8dp</item>
     </style>
-
-    <style name="Theme.Knowvamobile" parent="Base.Theme.Knowvamobile" />
 </resources>

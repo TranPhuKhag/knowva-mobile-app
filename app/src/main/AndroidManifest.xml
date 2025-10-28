@@ -15,7 +15,8 @@
         android:theme="@style/Theme.Knowvamobile">
         <activity
             android:name=".view.LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,5 +30,4 @@
         <activity android:name=".view.flashcard.CreateSetMetaActivity" />
         <activity android:name=".view.ProfileActivity" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
