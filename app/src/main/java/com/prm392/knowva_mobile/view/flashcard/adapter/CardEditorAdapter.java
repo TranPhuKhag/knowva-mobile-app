@@ -38,17 +38,17 @@ public class CardEditorAdapter extends RecyclerView.Adapter<CardEditorAdapter.VH
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         CardDraft draft = data.get(position);
-
+        
         // Clear old listeners to prevent issues
         holder.etTerm.removeTextChangedListener(holder.termWatcher);
         holder.etDef.removeTextChangedListener(holder.defWatcher);
-
+        
         holder.etTerm.setText(draft.front);
         holder.etDef.setText(draft.back);
 
         holder.termWatcher = new SimpleTextWatcher(s -> draft.front = s);
         holder.defWatcher = new SimpleTextWatcher(s -> draft.back = s);
-
+        
         holder.etTerm.addTextChangedListener(holder.termWatcher);
         holder.etDef.addTextChangedListener(holder.defWatcher);
     }
@@ -95,4 +95,3 @@ public class CardEditorAdapter extends RecyclerView.Adapter<CardEditorAdapter.VH
         }
     }
 }
-
