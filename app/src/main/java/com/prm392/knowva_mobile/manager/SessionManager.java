@@ -6,7 +6,7 @@ import com.prm392.knowva_mobile.model.response.UserProfileResponse;
 
 public class SessionManager {
     private static final String PREF_NAME = "MyAppPrefs";
-    private static final String KEY_USER_TOKEN = "user_token";
+    private static final String KEY_USER_TOKEN = "access_token";
     // --- Thêm các Key mới ---
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER_FULL_NAME = "user_full_name";

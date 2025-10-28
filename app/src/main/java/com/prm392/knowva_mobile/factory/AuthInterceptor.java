@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.prm392.knowva_mobile.manager.SessionManager;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -14,6 +16,7 @@ import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor {
     private Context context;
+    private SessionManager sessionManager;
 
     public AuthInterceptor(Context context) {
         this.context = context;
