@@ -172,7 +172,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        List<HomeScreenItem> items = homeRepository.getHomeItems();
+        String realUserName = sessionManager.getFullName();
+        List<HomeScreenItem> items = homeRepository.getHomeItems(realUserName);
         homeAdapter.setItems(items);
         loadSuggestedSets(items);
     }

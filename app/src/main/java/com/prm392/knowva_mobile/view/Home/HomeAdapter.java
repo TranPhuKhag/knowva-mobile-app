@@ -1,5 +1,8 @@
 package com.prm392.knowva_mobile.view.Home;
 
+import android.widget.VideoView;
+import android.net.Uri;
+import android.util.Log;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,16 +107,45 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {
         TextView tvGreeting;
+        VideoView videoView; // Thêm VideoView
 
         BannerViewHolder(@NonNull View itemView) {
             super(itemView);
             tvGreeting = itemView.findViewById(R.id.tv_greeting);
+            videoView = itemView.findViewById(R.id.video_view_banner); // Tìm VideoView bằng ID
         }
 
         void bind(HomeScreenItem.Banner bannerItem) {
+            // 1. Gán text chào mừng
             String greetingText = "Chào bạn, " + bannerItem.userName + "!";
-
             tvGreeting.setText(greetingText);
+
+            // 2. Thiết lập và phát video
+            try {
+                android.content.Context context = itemView.getContext();
+
+                // Tạo đường dẫn Uri đến tệp trong res/raw
+                String path = "android.resource://" + context.getPackageName() + "/" + R.raw.hello;
+                Uri uri = Uri.parse(path);
+
+                videoView.setVideoURI(uri);
+
+                // Xóa các nút điều khiển mặc định
+                videoView.setMediaController(null);
+
+                // Tắt tiếng và lặp lại video khi nó đã sẵn sàng
+                videoView.setOnPreparedListener(mp -> {
+                    mp.setVolume(0f, 0f); // Tắt tiếng
+                    mp.setLooping(true);    // Tự động lặp lại
+                });
+
+                // Bắt đầu phát
+                videoView.start();
+
+            } catch (Exception e) {
+                // Ghi log nếu có lỗi (ví dụ: không tìm thấy tệp video)
+                Log.e("BannerViewHolder", "Lỗi khi phát video", e);
+            }
         }
     }
 
