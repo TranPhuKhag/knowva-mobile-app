@@ -78,8 +78,6 @@ public class HomeActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
-            } else if (itemId == R.id.nav_settings) {
-                Toast.makeText(HomeActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.nav_logout) {
                 performLogout();
             }
