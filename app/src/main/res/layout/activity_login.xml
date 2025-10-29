@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/surface"
+    android:background="@drawable/background"
     android:paddingLeft="@dimen/screen_padding"
     android:paddingRight="@dimen/screen_padding"
     android:paddingTop="@dimen/space_16"
