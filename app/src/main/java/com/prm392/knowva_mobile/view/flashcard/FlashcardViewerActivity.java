@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +40,20 @@ public class FlashcardViewerActivity extends AppCompatActivity {
     private FlashcardRepository repo;
     private long setId;
     private boolean isOwner;
+    private FlashcardSet currentSet;
+
+    private final ActivityResultLauncher<Intent> editLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                String updatedJson = result.getData().getStringExtra("updated_json");
+                if (updatedJson != null) {
+                    currentSet = new Gson().fromJson(updatedJson, FlashcardSet.class);
+                    refreshViewer();
+                } else {
+                    reloadSet();
+                }
+            }
+        });
 
     @Override
     protected void onCreate(Bundle b) {
@@ -123,7 +139,7 @@ public class FlashcardViewerActivity extends AppCompatActivity {
 
         view.findViewById(R.id.bs_edit_set).setOnClickListener(v -> {
             dialog.dismiss();
-            Toast.makeText(this, "Edit set (coming soon)", Toast.LENGTH_SHORT).show();
+            openEditActivity();
         });
 
         view.findViewById(R.id.bs_delete_set).setOnClickListener(v -> {
@@ -132,6 +148,18 @@ public class FlashcardViewerActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private void openEditActivity() {
+        Intent i = new Intent(this, EditFlashcardSetActivity.class);
+        i.putExtra("mode", "EDIT");
+        i.putExtra("set_id", setId);
+
+        if (currentSet != null) {
+            i.putExtra("set_json", new Gson().toJson(currentSet));
+        }
+
+        editLauncher.launch(i);
     }
 
     private void confirmDelete() {
@@ -223,6 +251,33 @@ public class FlashcardViewerActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 termsAdapter.setSelected(position);
                 rvTerms.smoothScrollToPosition(position);
+            }
+        });
+    }
+
+    private void refreshViewer() {
+        if (currentSet != null) {
+            tvSetTitle.setText(currentSet.getTitle());
+            tvUsername.setText(currentSet.getUsername() != null ? currentSet.getUsername() : "");
+            int count = (currentSet.getFlashcards() != null ? currentSet.getFlashcards().size() : 0);
+            tvTerms.setText(count + " terms");
+            bindCards(currentSet.getFlashcards());
+        }
+    }
+
+    private void reloadSet() {
+        repo.getSetById(setId, new Callback<FlashcardSet>() {
+            @Override
+            public void onResponse(Call<FlashcardSet> call, Response<FlashcardSet> res) {
+                if (res.isSuccessful() && res.body() != null) {
+                    currentSet = res.body();
+                    refreshViewer();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlashcardSet> call, Throwable t) {
+                Toast.makeText(FlashcardViewerActivity.this, "Failed to reload", Toast.LENGTH_SHORT).show();
             }
         });
     }

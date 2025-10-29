@@ -14,6 +14,33 @@
         android:padding="12dp"
         android:orientation="vertical">
 
+        <!-- Header with remove button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Card"
+                android:textStyle="bold"
+                android:textColor="#666666"
+                android:textSize="14sp"/>
+
+            <ImageButton
+                android:id="@+id/btn_remove_card"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_close"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="#999999"
+                android:contentDescription="Remove card"/>
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,7 +48,7 @@
             app:boxBackgroundMode="none"
             app:hintTextColor="#999999">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_term"
+                android:id="@+id/edt_term"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"/>
@@ -41,7 +68,7 @@
             app:boxBackgroundMode="none"
             app:hintTextColor="#999999">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_definition"
+                android:id="@+id/edt_definition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"

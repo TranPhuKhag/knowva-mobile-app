@@ -31,6 +31,9 @@
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.flashcard.CreateSetActivity" />
         <activity android:name=".view.flashcard.CreateSetMetaActivity" />
+        <activity android:name=".view.flashcard.EditFlashcardSetActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.ProfileActivity" />
     </application>
 </manifest>
