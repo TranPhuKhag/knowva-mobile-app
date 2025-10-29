@@ -49,6 +49,7 @@ public class MyFlashcardsActivity extends AppCompatActivity {
             intent.putExtra("set_username", set.username);
             int terms = (set.flashcards == null) ? 0 : set.flashcards.size();
             intent.putExtra("set_terms", terms);
+            intent.putExtra("is_owner", true);
             // Truyền kèm flashcards nếu có (tránh gọi API lần nữa)
             if (set.flashcards != null && !set.flashcards.isEmpty()) {
                 intent.putExtra("cards_json", new com.google.gson.Gson().toJson(set.flashcards));

@@ -35,4 +35,8 @@ public class FlashcardRepository {
     public void getSetById(long id, Callback<FlashcardSet> callback) {
         service.getSetById(id).enqueue(callback);
     }
+
+    public Call<Void> deleteSet(long id) {
+        return service.deleteSet(id);
+    }
 }
