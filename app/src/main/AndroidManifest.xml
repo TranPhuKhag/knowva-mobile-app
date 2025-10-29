@@ -26,6 +26,9 @@
         <activity android:name=".view.RegisterActivity" />
         <activity android:name=".view.HomeActivity" />
         <activity android:name=".view.flashcard.MyFlashcardsActivity" />
+        <activity android:name=".view.flashcard.FlashcardViewerActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.flashcard.CreateSetActivity" />
         <activity android:name=".view.flashcard.CreateSetMetaActivity" />
         <activity android:name=".view.ProfileActivity" />

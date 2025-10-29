@@ -1,5 +1,6 @@
 package com.prm392.knowva_mobile.service;
 
+import com.prm392.knowva_mobile.model.FlashcardSet;
 import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.view.flashcard.model.CreateSetRequest;
 
@@ -9,11 +10,18 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface FlashcardService {
     @GET("flashcard-sets/my-flashcard-sets")
     Call<List<MyFlashcardSetResponse>> getMySets();
 
+    @GET("flashcard-sets/all")
+    Call<List<MyFlashcardSetResponse>> getAllSets();
+
     @POST("flashcard-sets/save")
     Call<Void> createSet(@Body CreateSetRequest body);
+
+    @GET("flashcard-sets/{id}")
+    Call<FlashcardSet> getSetById(@Path("id") long id);
 }

@@ -1,17 +1,18 @@
 package com.prm392.knowva_mobile.repository;
 
+import android.content.Context;
 import com.prm392.knowva_mobile.model.FlashcardSet;
+import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.view.Home.HomeScreenItem;
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
 
 public class HomeRepository {
-    // Trong thực tế, bạn sẽ khởi tạo HomeService ở đây
-    // private HomeService homeService;
+    private FlashcardRepository flashcardRepository;
 
-    public HomeRepository() {
-        // Retrofit retrofit = APIClient.getClient(context);
-        // homeService = retrofit.create(HomeService.class);
+    public HomeRepository(Context context) {
+        this.flashcardRepository = new FlashcardRepository(context);
     }
 
     // Phương thức cung cấp dữ liệu (hiện tại là mock data)
@@ -39,11 +40,14 @@ public class HomeRepository {
         items.add(new HomeScreenItem.Header("Tác giả nổi bật"));
         items.add(new HomeScreenItem.Authors(authorSets));
 
-        // 4. Thêm Tiêu đề và các item gợi ý
+        // 4. Thêm Tiêu đề (phần gợi ý sẽ load từ API)
         items.add(new HomeScreenItem.Header("Gợi ý cho bạn"));
-        items.add(new HomeScreenItem.RecommendedSet(new FlashcardSet("5", "Toán cao cấp", "Nguyễn Văn A", 99)));
-        items.add(new HomeScreenItem.RecommendedSet(new FlashcardSet("6", "Lập trình Android", "Trần Thị B", 110)));
 
         return items;
+    }
+
+    // Gọi API để lấy tất cả flashcard sets công khai
+    public Call<List<MyFlashcardSetResponse>> getAllSets() {
+        return flashcardRepository.getAllSets();
     }
 }

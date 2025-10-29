@@ -1,12 +1,10 @@
 package com.prm392.knowva_mobile.view;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -18,21 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
-import com.prm392.knowva_mobile.manager.SessionManager;
-
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.prm392.knowva_mobile.R;
+import com.prm392.knowva_mobile.manager.SessionManager;
+import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.repository.AuthRepository;
 import com.prm392.knowva_mobile.repository.HomeRepository;
 import com.prm392.knowva_mobile.view.Home.HomeAdapter;
 import com.prm392.knowva_mobile.view.Home.HomeScreenItem;
 import com.prm392.knowva_mobile.view.flashcard.FlashcardBottomSheet;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -56,17 +55,14 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Khởi tạo AuthRepository
         sessionManager = new SessionManager(this);
         authRepository = new AuthRepository(this);
 
-        // Ánh xạ View
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         topAppBar = findViewById(R.id.topAppBar);
         recyclerView = findViewById(R.id.rv_home_activity);
 
-        // Thiết lập Toolbar và Drawer
         setSupportActionBar(topAppBar);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, topAppBar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -75,7 +71,6 @@ public class HomeActivity extends AppCompatActivity {
 
         updateNavHeader();
 
-        // Sidebar menu event
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
@@ -92,12 +87,10 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
 
-        // RecyclerView
-        homeRepository = new HomeRepository();
+        homeRepository = new HomeRepository(this);
         setupRecyclerView();
         loadData();
 
-        // Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         bottomNav.setSelectedItemId(R.id.menu_bottom_home);
         bottomNav.setOnItemSelectedListener(item -> {
@@ -117,7 +110,6 @@ public class HomeActivity extends AppCompatActivity {
             return false;
         });
 
-        // Xử lý nút back với OnBackPressedCallback
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -130,28 +122,24 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    // --- HÀM MỚI ĐỂ CẬP NHẬT HEADER ---
     private void updateNavHeader() {
-        View headerView = navigationView.getHeaderView(0); // Lấy header view
+        View headerView = navigationView.getHeaderView(0);
         TextView tvUserName = headerView.findViewById(R.id.tv_user_name);
         TextView tvUserEmail = headerView.findViewById(R.id.tv_user_email);
         ImageView ivAvatar = headerView.findViewById(R.id.iv_avatar);
 
-        // Lấy thông tin từ SessionManager
         String name = sessionManager.getFullName();
         String email = sessionManager.getEmail();
         String avatarUrl = sessionManager.getAvatarUrl();
 
-        // Cập nhật TextViews
         tvUserName.setText(name);
         tvUserEmail.setText(email);
 
-        // Cập nhật Avatar dùng Glide
         Glide.with(this)
-                .load(avatarUrl) // URL lấy từ session
-                .placeholder(R.mipmap.ic_launcher_round) // Ảnh mặc định khi đang tải
-                .error(R.mipmap.ic_launcher_round) // Ảnh mặc định nếu lỗi
-                .circleCrop() // Bo tròn ảnh
+                .load(avatarUrl)
+                .placeholder(R.mipmap.ic_launcher_round)
+                .error(R.mipmap.ic_launcher_round)
+                .circleCrop()
                 .into(ivAvatar);
     }
 
@@ -188,6 +176,29 @@ public class HomeActivity extends AppCompatActivity {
     private void loadData() {
         List<HomeScreenItem> items = homeRepository.getHomeItems();
         homeAdapter.setItems(items);
+        loadSuggestedSets(items);
+    }
+
+    private void loadSuggestedSets(List<HomeScreenItem> currentItems) {
+        homeRepository.getAllSets().enqueue(new Callback<List<MyFlashcardSetResponse>>() {
+            @Override
+            public void onResponse(Call<List<MyFlashcardSetResponse>> call, Response<List<MyFlashcardSetResponse>> res) {
+                if (!res.isSuccessful() || res.body() == null) return;
+
+                List<MyFlashcardSetResponse> all = res.body();
+                int limit = Math.min(4, all.size());
+                List<MyFlashcardSetResponse> suggestedList = all.subList(0, limit);
+
+                List<HomeScreenItem> updatedItems = new ArrayList<>(currentItems);
+                updatedItems.add(new HomeScreenItem.SuggestedSets(suggestedList));
+
+                homeAdapter.setItems(updatedItems);
+            }
+
+            @Override
+            public void onFailure(Call<List<MyFlashcardSetResponse>> call, Throwable t) {
+            }
+        });
     }
 
     private void performLogout() {
@@ -214,3 +225,4 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 }
+

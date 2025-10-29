@@ -41,14 +41,28 @@ public class MyFlashcardsActivity extends AppCompatActivity {
         LibraryAdapter adapter = new LibraryAdapter();
         rv.setAdapter(adapter);
 
+        // Thiết lập click listener để mở FlashcardViewerActivity
+        adapter.setOnItemClickListener(set -> {
+            Intent intent = new Intent(this, FlashcardViewerActivity.class);
+            intent.putExtra("set_id", set.id);
+            intent.putExtra("set_title", set.title);
+            intent.putExtra("set_username", set.username);
+            int terms = (set.flashcards == null) ? 0 : set.flashcards.size();
+            intent.putExtra("set_terms", terms);
+            // Truyền kèm flashcards nếu có (tránh gọi API lần nữa)
+            if (set.flashcards != null && !set.flashcards.isEmpty()) {
+                intent.putExtra("cards_json", new com.google.gson.Gson().toJson(set.flashcards));
+            }
+            startActivity(intent);
+        });
+
         // Thiết lập Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
-        bottomNav.setSelectedItemId(R.id.menu_bottom_flashcard); // Chọn tab Flashcard
+        bottomNav.setSelectedItemId(R.id.menu_bottom_flashcard);
 
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.menu_bottom_home) {
-                // Quay về Home
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
@@ -56,7 +70,6 @@ public class MyFlashcardsActivity extends AppCompatActivity {
                 return true;
             }
             if (id == R.id.menu_bottom_flashcard) {
-                // Hiện FlashcardBottomSheet
                 new FlashcardBottomSheet().show(getSupportFragmentManager(), "FlashcardBottomSheet");
                 return false;
             }
@@ -125,6 +138,15 @@ public class MyFlashcardsActivity extends AppCompatActivity {
     static class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final List<Object> data = new ArrayList<>();
         private static final int T_HEADER = 0, T_ITEM = 1;
+        private OnItemClickListener listener;
+
+        interface OnItemClickListener {
+            void onItemClick(MyFlashcardSetResponse set);
+        }
+
+        void setOnItemClickListener(OnItemClickListener listener) {
+            this.listener = listener;
+        }
 
         void submit(List<Object> items) {
             data.clear();
@@ -165,6 +187,13 @@ public class MyFlashcardsActivity extends AppCompatActivity {
                 int terms = (s.flashcards == null) ? 0 : s.flashcards.size();
                 vh.terms.setText(terms + " terms");
                 vh.username.setText(s.username);
+
+                // Thêm click listener
+                vh.itemView.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onItemClick(s);
+                    }
+                });
             }
         }
 
