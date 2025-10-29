@@ -16,6 +16,9 @@ public interface FlashcardService {
     @GET("flashcard-sets/my-flashcard-sets")
     Call<List<MyFlashcardSetResponse>> getMySets();
 
+    @GET("flashcard-sets/all")
+    Call<List<MyFlashcardSetResponse>> getAllSets();
+
     @POST("flashcard-sets/save")
     Call<Void> createSet(@Body CreateSetRequest body);
 

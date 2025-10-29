@@ -1,5 +1,6 @@
 package com.prm392.knowva_mobile.view.Home;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.prm392.knowva_mobile.R;
+import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.view.Home.HomeScreenItem;
+import com.prm392.knowva_mobile.view.flashcard.FlashcardViewerActivity;
 
 import java.util.List;
 
@@ -22,6 +26,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_AUTHORS = 2;
     private static final int TYPE_HEADER = 3;
     private static final int TYPE_RECOMMENDED = 4;
+    private static final int TYPE_SUGGESTED_SETS = 5;
 
     private List<HomeScreenItem> items;
 
@@ -38,6 +43,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (item instanceof HomeScreenItem.Authors) return TYPE_AUTHORS;
         if (item instanceof HomeScreenItem.Header) return TYPE_HEADER;
         if (item instanceof HomeScreenItem.RecommendedSet) return TYPE_RECOMMENDED;
+        if (item instanceof HomeScreenItem.SuggestedSets) return TYPE_SUGGESTED_SETS;
         return -1;
     }
 
@@ -56,6 +62,8 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new HeaderViewHolder(inflater.inflate(R.layout.item_home_header, parent, false));
             case TYPE_RECOMMENDED:
                 return new RecommendedSetViewHolder(inflater.inflate(R.layout.item_recommended_set, parent, false));
+            case TYPE_SUGGESTED_SETS:
+                return new SuggestedSetsViewHolder(inflater.inflate(R.layout.item_suggested_sets_container, parent, false));
             default:
                 throw new IllegalArgumentException("Invalid view type");
         }
@@ -81,6 +89,9 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
             case TYPE_RECOMMENDED:
                 ((RecommendedSetViewHolder) holder).bind((HomeScreenItem.RecommendedSet) item);
+                break;
+            case TYPE_SUGGESTED_SETS:
+                ((SuggestedSetsViewHolder) holder).bind((HomeScreenItem.SuggestedSets) item);
                 break;
         }
     }
@@ -165,6 +176,39 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvTitle.setText(item.set.getTitle());
             String details = item.set.getCardCount() + " thuật ngữ";
             tvSetDetails.setText(details);
+        }
+    }
+
+    // ViewHolder cho danh sách gợi ý từ API
+    static class SuggestedSetsViewHolder extends RecyclerView.ViewHolder {
+        RecyclerView rvSuggested;
+
+        SuggestedSetsViewHolder(@NonNull View itemView) {
+            super(itemView);
+            rvSuggested = itemView.findViewById(R.id.rv_suggested_sets);
+        }
+
+        void bind(HomeScreenItem.SuggestedSets item) {
+            rvSuggested.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.VERTICAL, false));
+            SuggestedSetAdapter adapter = new SuggestedSetAdapter(set -> openSet(itemView.getContext(), set));
+            rvSuggested.setAdapter(adapter);
+            adapter.submit(item.sets);
+        }
+
+        private void openSet(android.content.Context context, MyFlashcardSetResponse set) {
+            Intent i = new Intent(context, FlashcardViewerActivity.class);
+            i.putExtra("set_id", set.id);
+            i.putExtra("set_title", set.title);
+            i.putExtra("set_username", set.username);
+            int terms = (set.flashcards == null) ? 0 : set.flashcards.size();
+            i.putExtra("set_terms", terms);
+
+            // Truyền sẵn danh sách thẻ để Viewer không cần gọi lại API
+            if (set.flashcards != null && !set.flashcards.isEmpty()) {
+                i.putExtra("cards_json", new Gson().toJson(set.flashcards));
+            }
+
+            context.startActivity(i);
         }
     }
 }

@@ -24,6 +24,10 @@ public class FlashcardRepository {
         return service.getMySets();
     }
 
+    public Call<List<MyFlashcardSetResponse>> getAllSets() {
+        return service.getAllSets();
+    }
+
     public Call<Void> createSet(CreateSetRequest body) {
         return service.createSet(body);
     }
