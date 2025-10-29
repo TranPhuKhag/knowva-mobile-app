@@ -6,4 +6,11 @@
         android:icon="@drawable/ic_check"
         android:title="Done"
         app:showAsAction="always"/>
+    <!-- Alias for edit mode -->
+    <item
+        android:id="@+id/menu_save"
+        android:icon="@drawable/ic_check"
+        android:title="Save"
+        android:visible="false"
+        app:showAsAction="never"/>
 </menu>

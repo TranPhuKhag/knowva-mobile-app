@@ -7,6 +7,7 @@ import com.prm392.knowva_mobile.model.FlashcardSet;
 import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.service.FlashcardService;
 import com.prm392.knowva_mobile.view.flashcard.model.CreateSetRequest;
+import com.prm392.knowva_mobile.view.flashcard.model.UpdateSetRequest;
 
 import java.util.List;
 
@@ -38,5 +39,9 @@ public class FlashcardRepository {
 
     public Call<Void> deleteSet(long id) {
         return service.deleteSet(id);
+    }
+
+    public Call<FlashcardSet> updateSet(long id, UpdateSetRequest body) {
+        return service.updateSet(id, body);
     }
 }

@@ -10,24 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.prm392.knowva_mobile.R;
-import com.prm392.knowva_mobile.view.flashcard.model.CardDraft;
-import java.util.ArrayList;
+import com.prm392.knowva_mobile.view.flashcard.model.EditableCard;
 import java.util.List;
 
-public class CardEditorAdapter extends RecyclerView.Adapter<CardEditorAdapter.VH> {
+public class EditCardAdapter extends RecyclerView.Adapter<EditCardAdapter.VH> {
 
-    private final List<CardDraft> data = new ArrayList<>();
+    private final List<EditableCard> data;
+    private final OnCardRemoveListener removeListener;
 
-    public CardEditorAdapter() {
+    public interface OnCardRemoveListener {
+        void onRemove(int position);
     }
 
-    public void addEmpty() {
-        data.add(new CardDraft());
-        notifyItemInserted(data.size() - 1);
-    }
-
-    public List<CardDraft> getData() {
-        return data;
+    public EditCardAdapter(List<EditableCard> data, OnCardRemoveListener listener) {
+        this.data = data;
+        this.removeListener = listener;
     }
 
     @NonNull
@@ -40,21 +37,13 @@ public class CardEditorAdapter extends RecyclerView.Adapter<CardEditorAdapter.VH
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
-        CardDraft card = data.get(position);
-        holder.bind(card, position, this);
+        EditableCard card = data.get(position);
+        holder.bind(card, removeListener);
     }
 
     @Override
     public int getItemCount() {
         return data.size();
-    }
-
-    private void removeAt(int position) {
-        if (position >= 0 && position < data.size()) {
-            data.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, data.size());
-        }
     }
 
     static class VH extends RecyclerView.ViewHolder {
@@ -68,8 +57,8 @@ public class CardEditorAdapter extends RecyclerView.Adapter<CardEditorAdapter.VH
             btnRemove = v.findViewById(R.id.btn_remove_card);
         }
 
-        void bind(CardDraft card, int position, CardEditorAdapter adapter) {
-            // Clear previous listeners to avoid memory leaks
+        void bind(EditableCard card, OnCardRemoveListener listener) {
+            // Remove previous listeners
             edtFront.setTag(null);
             edtBack.setTag(null);
 
@@ -108,8 +97,8 @@ public class CardEditorAdapter extends RecyclerView.Adapter<CardEditorAdapter.VH
             // Remove button click
             btnRemove.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION) {
-                    adapter.removeAt(pos);
+                if (pos != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onRemove(pos);
                 }
             });
         }
