@@ -1,0 +1,44 @@
+package com.prm392.knowva_mobile.view.quiz;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.prm392.knowva_mobile.R;
+
+public class QuizBottomSheet extends BottomSheetDialogFragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Inflate layout mới bạn vừa tạo
+        View view = inflater.inflate(R.layout.bottom_sheet_quiz, container, false);
+
+        TextView tvQuizSet = view.findViewById(R.id.tv_quiz_set);
+        TextView tvMyQuiz = view.findViewById(R.id.tv_my_quiz);
+
+        // Tạm thời hiển thị Toast (bạn có thể thay bằng Intent sau)
+        tvQuizSet.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Mở tạo Quiz set", Toast.LENGTH_SHORT).show();
+            // Ví dụ: startActivity(new Intent(requireContext(), CreateQuizActivity.class));
+            dismiss();
+        });
+
+        // Tạm thời hiển thị Toast
+        tvMyQuiz.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Mở Quiz của tôi", Toast.LENGTH_SHORT).show();
+            // Ví dụ: Intent intent = new Intent(requireContext(), MyQuizzesActivity.class);
+            // startActivity(intent);
+            dismiss();
+        });
+
+        return view;
+    }
+}

@@ -37,6 +37,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.prm392.knowva_mobile.view.quiz.QuizBottomSheet;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -102,7 +103,7 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
             if (id == R.id.menu_bottom_quiz) {
-                Toast.makeText(this, "Quiz", Toast.LENGTH_SHORT).show();
+                new QuizBottomSheet().show(getSupportFragmentManager(), "QuizBottomSheet");
                 return true;
             }
             return false;
