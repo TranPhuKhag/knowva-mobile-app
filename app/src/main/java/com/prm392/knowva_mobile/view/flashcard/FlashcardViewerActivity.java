@@ -5,6 +5,8 @@ import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
@@ -27,6 +29,8 @@ public class FlashcardViewerActivity extends AppCompatActivity {
     private ViewPager2 vp;
     private TabLayout tabDots;
     private TextView tvSetTitle, tvUsername, tvTerms;
+    private RecyclerView rvTerms;
+    private TermsAdapter termsAdapter;
     private FlashcardRepository repo;
     private long setId;
 
@@ -44,6 +48,9 @@ public class FlashcardViewerActivity extends AppCompatActivity {
         tvSetTitle = findViewById(R.id.tvSetTitle);
         tvUsername = findViewById(R.id.tvUsername);
         tvTerms = findViewById(R.id.tvTerms);
+        rvTerms = findViewById(R.id.rvTerms);
+        rvTerms.setLayoutManager(new LinearLayoutManager(this));
+        rvTerms.setItemAnimator(null); // tránh flicker khi highlight
 
         repo = new FlashcardRepository(this);
         setId = getIntent().getLongExtra("set_id", -1);
@@ -116,17 +123,39 @@ public class FlashcardViewerActivity extends AppCompatActivity {
             finish();
             return;
         }
-        FlashcardPagerAdapter adapter = new FlashcardPagerAdapter(cards);
-        vp.setAdapter(adapter);
-        // Snap từng trang, không overscroll
-        vp.setOffscreenPageLimit(1);
 
-        new TabLayoutMediator(tabDots, vp, (tab, pos) -> {}).attach();
+        // ViewPager
+        FlashcardPagerAdapter pagerAdapter = new FlashcardPagerAdapter(cards);
+        vp.setAdapter(pagerAdapter);
+        vp.setOffscreenPageLimit(1);
+        new TabLayoutMediator(tabDots, vp, new TabLayoutMediator.TabConfigurationStrategy() {
+            @Override
+            public void onConfigureTab(@androidx.annotation.NonNull TabLayout.Tab tab, int position) {
+                // Empty - chỉ dùng dots
+            }
+        }).attach();
+
+        // RecyclerView "Terms"
+        termsAdapter = new TermsAdapter(cards, new TermsAdapter.OnItemClick() {
+            @Override
+            public void onClick(int position) {
+                vp.setCurrentItem(position, true);
+            }
+        });
+        rvTerms.setAdapter(termsAdapter);
+
+        // Đồng bộ highlight & auto-scroll
+        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                termsAdapter.setSelected(position);
+                rvTerms.smoothScrollToPosition(position);
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Không inflate menu → Không có Free trial, Lưu, 3 chấm
         return true;
     }
 }
