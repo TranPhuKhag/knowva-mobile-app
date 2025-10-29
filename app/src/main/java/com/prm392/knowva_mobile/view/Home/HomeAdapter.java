@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -104,27 +103,17 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // --- ViewHolder Classes ---
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {
-        TextView tvGreeting, tvStreak, tvProgressText;
-        ProgressBar pbDailyGoal;
+        TextView tvGreeting;
 
         BannerViewHolder(@NonNull View itemView) {
             super(itemView);
             tvGreeting = itemView.findViewById(R.id.tv_greeting);
-            tvStreak = itemView.findViewById(R.id.tv_streak);
-            tvProgressText = itemView.findViewById(R.id.tv_progress_text);
-            pbDailyGoal = itemView.findViewById(R.id.pb_daily_goal);
         }
 
         void bind(HomeScreenItem.Banner bannerItem) {
             String greetingText = "Chào bạn, " + bannerItem.userName + "!";
-            String streakText = "Chuỗi " + bannerItem.streak + " ngày học 🔥";
-            String progressText = bannerItem.dailyProgress + "/" + bannerItem.dailyGoal + " thẻ";
 
             tvGreeting.setText(greetingText);
-            tvStreak.setText(streakText);
-            tvProgressText.setText(progressText);
-            pbDailyGoal.setMax(bannerItem.dailyGoal);
-            pbDailyGoal.setProgress(bannerItem.dailyProgress);
         }
     }
 
