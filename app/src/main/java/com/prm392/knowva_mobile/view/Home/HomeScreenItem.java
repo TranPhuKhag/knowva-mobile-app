@@ -1,6 +1,7 @@
 package com.prm392.knowva_mobile.view.Home;
 
 import com.prm392.knowva_mobile.model.FlashcardSet;
+import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import java.util.List;
 
 // Lớp cha trừu tượng để định nghĩa các loại item trên màn hình chính
@@ -44,5 +45,11 @@ public abstract class HomeScreenItem {
     public static final class RecommendedSet extends HomeScreenItem {
         public final FlashcardSet set;
         public RecommendedSet(FlashcardSet set) { this.set = set; }
+    }
+
+    // 6. Dữ liệu cho danh sách gợi ý từ API
+    public static final class SuggestedSets extends HomeScreenItem {
+        public final List<MyFlashcardSetResponse> sets;
+        public SuggestedSets(List<MyFlashcardSetResponse> sets) { this.sets = sets; }
     }
 }
