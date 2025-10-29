@@ -6,10 +6,10 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tv_flashcard_set"
+        android:id="@+id/bs_edit_set"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Flashcard set"
+        android:text="Edit set"
         android:textSize="18sp"
         android:padding="16dp"
         android:clickable="true"
@@ -22,14 +22,16 @@
         android:background="#E0E0E0" />
 
     <TextView
-        android:id="@+id/tv_my_flashcard"
+        android:id="@+id/bs_delete_set"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Flashcard của tôi"
+        android:text="Delete set"
         android:textSize="18sp"
         android:padding="16dp"
         android:clickable="true"
         android:focusable="true"
+        android:textColor="#F44336"
         android:background="?attr/selectableItemBackground" />
 
 </LinearLayout>
+

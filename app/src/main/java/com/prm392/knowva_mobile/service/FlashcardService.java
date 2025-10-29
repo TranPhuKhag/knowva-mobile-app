@@ -8,6 +8,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -24,4 +25,7 @@ public interface FlashcardService {
 
     @GET("flashcard-sets/{id}")
     Call<FlashcardSet> getSetById(@Path("id") long id);
+
+    @DELETE("flashcard-sets/{id}")
+    Call<Void> deleteSet(@Path("id") long id);
 }

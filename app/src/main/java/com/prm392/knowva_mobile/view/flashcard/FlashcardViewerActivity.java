@@ -1,7 +1,9 @@
 package com.prm392.knowva_mobile.view.flashcard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
@@ -33,6 +37,7 @@ public class FlashcardViewerActivity extends AppCompatActivity {
     private TermsAdapter termsAdapter;
     private FlashcardRepository repo;
     private long setId;
+    private boolean isOwner;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -54,6 +59,7 @@ public class FlashcardViewerActivity extends AppCompatActivity {
 
         repo = new FlashcardRepository(this);
         setId = getIntent().getLongExtra("set_id", -1);
+        isOwner = getIntent().getBooleanExtra("is_owner", false);
 
         // Nhận meta từ Intent
         String title = getIntent().getStringExtra("set_title");
@@ -63,6 +69,15 @@ public class FlashcardViewerActivity extends AppCompatActivity {
         if (title != null) tvSetTitle.setText(title);
         if (username != null) tvUsername.setText(username);
         if (terms >= 0) tvTerms.setText(terms + " terms");
+
+        // Menu click listener
+        tb.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.menu_more) {
+                openOwnerBottomSheet();
+                return true;
+            }
+            return false;
+        });
 
         // 1) Nếu có truyền kèm JSON cards -> dùng luôn
         String json = getIntent().getStringExtra("cards_json");
@@ -99,6 +114,64 @@ public class FlashcardViewerActivity extends AppCompatActivity {
         } else {
             finish();
         }
+    }
+
+    private void openOwnerBottomSheet() {
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_owner_actions, null, false);
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(view);
+
+        view.findViewById(R.id.bs_edit_set).setOnClickListener(v -> {
+            dialog.dismiss();
+            Toast.makeText(this, "Edit set (coming soon)", Toast.LENGTH_SHORT).show();
+        });
+
+        view.findViewById(R.id.bs_delete_set).setOnClickListener(v -> {
+            dialog.dismiss();
+            confirmDelete();
+        });
+
+        dialog.show();
+    }
+
+    private void confirmDelete() {
+        new MaterialAlertDialogBuilder(this)
+            .setTitle("Delete set")
+            .setMessage("Are you sure you want to delete this set? This action cannot be undone.")
+            .setPositiveButton("Yes", (d, which) -> callDelete())
+            .setNegativeButton("No", null)
+            .show();
+    }
+
+    private void callDelete() {
+        Toast.makeText(this, "Deleting...", Toast.LENGTH_SHORT).show();
+
+        repo.deleteSet(setId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> res) {
+                if (res.isSuccessful()) {
+                    Toast.makeText(FlashcardViewerActivity.this, "Set deleted successfully", Toast.LENGTH_SHORT).show();
+
+                    Intent data = new Intent().putExtra("deleted_set_id", setId);
+                    setResult(RESULT_OK, data);
+
+                    finish();
+                } else {
+                    String msg = "Delete failed (" + res.code() + ")";
+                    if (res.code() == 401) msg = "Unauthorized - Please login again";
+                    else if (res.code() == 403) msg = "Forbidden - You don't have permission";
+                    else if (res.code() == 404) msg = "Set not found";
+                    else if (res.code() >= 500) msg = "Server error - Please try again later";
+
+                    Toast.makeText(FlashcardViewerActivity.this, msg, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(FlashcardViewerActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private List<Flashcard> convertToFlashcards(List<MyFlashcardSetResponse.Card> cards) {
@@ -156,6 +229,9 @@ public class FlashcardViewerActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (isOwner) {
+            getMenuInflater().inflate(R.menu.menu_flashcard_viewer_owner, menu);
+        }
         return true;
     }
 }
