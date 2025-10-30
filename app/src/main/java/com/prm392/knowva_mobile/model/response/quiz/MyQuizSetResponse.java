@@ -13,12 +13,16 @@ public class MyQuizSetResponse {
     public String updatedAt;
     public List<Question> questions;
 
+    public int timeLimit;
+    public String questionType;
+    public String category;
+    public String visibility;
     public static class Question {
         public long id;
         public String questionText;
-        public String imageUrl; // <-- THÊM TRƯỜNG NÀY
-        public int order;       // <-- THÊM TRƯỜNG NÀY
-        public List<Answer> answers; // <-- THÊM TRƯỜNG NÀY
+        public String imageUrl;
+        public int order;
+        public List<Answer> answers;
     }
 
     public static class Answer {

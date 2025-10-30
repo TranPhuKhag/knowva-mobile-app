@@ -31,6 +31,12 @@ public class QuestionEditorAdapter extends RecyclerView.Adapter<QuestionEditorAd
         this.onDataChanged = onDataChanged;
     }
 
+    public void submitList(List<QuizQuestionDraft> newQuestions) {
+        data.clear();
+        data.addAll(newQuestions);
+        notifyDataSetChanged();
+        onDataChanged.run();
+    }
     public void addEmptyQuestion() {
         data.add(new QuizQuestionDraft());
         notifyItemInserted(data.size() - 1);

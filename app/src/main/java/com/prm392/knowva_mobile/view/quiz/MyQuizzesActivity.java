@@ -96,6 +96,14 @@ public class MyQuizzesActivity extends AppCompatActivity {
         fetchMyQuizzes();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Tải lại dữ liệu mỗi khi quay lại màn hình này
+        // để nhận được các thay đổi mới nhất sau khi edit.
+        fetchMyQuizzes();
+    }
+
     private void fetchMyQuizzes() {
         quizRepository.getMyQuizSets().enqueue(new Callback<List<MyQuizSetResponse>>() {
             @Override

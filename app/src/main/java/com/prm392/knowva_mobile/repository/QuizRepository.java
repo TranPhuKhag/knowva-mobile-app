@@ -31,4 +31,8 @@ public class QuizRepository {
     public Call<MyQuizSetResponse> getQuizSetById(long id) {
         return service.getQuizSetById(id);
     }
+
+    public Call<MyQuizSetResponse> updateQuizSet(long id, CreateQuizRequest body) {
+        return service.updateQuizSet(id, body);
+    }
 }

@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
+import android.view.Menu;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,9 @@ import com.prm392.knowva_mobile.R;
 import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
 import com.prm392.knowva_mobile.repository.QuizRepository;
 import com.prm392.knowva_mobile.view.quiz.adapter.QuizDetailAdapter;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
+import com.prm392.knowva_mobile.manager.SessionManager;
 
 import java.util.Locale;
 
@@ -36,6 +41,10 @@ public class QuizDetailActivity extends AppCompatActivity {
     private Button btnStartQuiz;
     private long quizId;
 
+    private SessionManager sessionManager;
+    private MyQuizSetResponse mCurrentQuiz;
+    private MaterialToolbar toolbar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +58,7 @@ public class QuizDetailActivity extends AppCompatActivity {
         }
 
         quizRepository = new QuizRepository(this);
+        sessionManager = new SessionManager(this);
 
         // --- Ánh xạ View ---
         tvSetTitle = findViewById(R.id.tvSetTitle);
@@ -59,7 +69,8 @@ public class QuizDetailActivity extends AppCompatActivity {
         btnStartQuiz = findViewById(R.id.btn_start_quiz);
 
         // --- Toolbar ---
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar); // Gán vào biến toàn cục
+        setSupportActionBar(toolbar); // Quan trọng: Đặt làm Action Bar
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         // --- RecyclerView ---
@@ -75,6 +86,56 @@ public class QuizDetailActivity extends AppCompatActivity {
 
         // --- Tải dữ liệu ---
         fetchQuizDetails();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Chỉ hiển thị menu nếu là chủ sở hữu
+        if (mCurrentQuiz != null &&
+                mCurrentQuiz.username != null &&
+                sessionManager.getFullName() != null &&
+                mCurrentQuiz.username.equals(sessionManager.getFullName())) {
+
+            getMenuInflater().inflate(R.menu.menu_quiz_detail_owner, menu);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == R.id.menu_quiz_more) {
+            openOwnerBottomSheet();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void openOwnerBottomSheet() {
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_quiz_owner_actions, null);
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(view);
+
+        view.findViewById(R.id.bs_quiz_edit).setOnClickListener(v -> {
+            dialog.dismiss();
+            openEditActivity();
+        });
+
+        view.findViewById(R.id.bs_quiz_delete).setOnClickListener(v -> {
+            dialog.dismiss();
+            // TODO: Implement delete confirmation
+            Toast.makeText(this, "Xóa (chưa implement)", Toast.LENGTH_SHORT).show();
+        });
+
+        dialog.show();
+    }
+
+    private void openEditActivity() {
+        if (mCurrentQuiz == null) return;
+
+        Intent i = new Intent(this, EditQuizActivity.class);
+        i.putExtra("quiz_json", new Gson().toJson(mCurrentQuiz));
+        startActivity(i);
     }
 
     private void fetchQuizDetails() {
@@ -96,6 +157,8 @@ public class QuizDetailActivity extends AppCompatActivity {
     }
 
     private void bindData(MyQuizSetResponse quiz) {
+        mCurrentQuiz = quiz;
+
         // Bind thông tin meta
         tvSetTitle.setText(quiz.title);
         tvUsername.setText(quiz.username);
@@ -112,5 +175,6 @@ public class QuizDetailActivity extends AppCompatActivity {
 
         // Bind danh sách câu hỏi
         adapter.submitList(quiz.questions);
+        invalidateOptionsMenu();
     }
 }
