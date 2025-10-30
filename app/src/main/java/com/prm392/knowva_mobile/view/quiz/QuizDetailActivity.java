@@ -121,12 +121,6 @@ public class QuizDetailActivity extends AppCompatActivity {
             openEditActivity();
         });
 
-        view.findViewById(R.id.bs_quiz_delete).setOnClickListener(v -> {
-            dialog.dismiss();
-            // TODO: Implement delete confirmation
-            Toast.makeText(this, "Xóa (chưa implement)", Toast.LENGTH_SHORT).show();
-        });
-
         dialog.show();
     }
 

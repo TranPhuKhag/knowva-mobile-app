@@ -35,4 +35,7 @@ public class QuizRepository {
     public Call<MyQuizSetResponse> updateQuizSet(long id, CreateQuizRequest body) {
         return service.updateQuizSet(id, body);
     }
+    public Call<Void> deleteQuizSet(long id) {
+        return service.deleteQuizSet(id);
+    }
 }

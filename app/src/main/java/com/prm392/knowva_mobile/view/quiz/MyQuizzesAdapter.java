@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.ImageButton;
 
 import com.prm392.knowva_mobile.R;
 import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
@@ -21,6 +22,7 @@ public class MyQuizzesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public interface OnItemClickListener {
         void onItemClick(MyQuizSetResponse set);
+        void onDeleteClick(MyQuizSetResponse set, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -33,8 +35,19 @@ public class MyQuizzesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyDataSetChanged();
     }
 
+    public void removeItem(int position) {
+        if (position >= 0 && position < data.size()) {
+            data.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
     @Override
     public int getItemViewType(int pos) {
+        // Cẩn thận: kiểm tra data.get(pos) có null không
+        if (pos < 0 || pos >= data.size() || data.get(pos) == null) {
+            return T_ITEM; // Hoặc một kiểu mặc định
+        }
         return (data.get(pos) instanceof String) ? T_HEADER : T_ITEM;
     }
 
@@ -51,7 +64,7 @@ public class MyQuizzesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return new VHHeader(v);
         } else {
             // Tái sử dụng layout của flashcard
-            View v = LayoutInflater.from(p.getContext()).inflate(R.layout.item_my_flashcard_set, p, false);
+            View v = LayoutInflater.from(p.getContext()).inflate(R.layout.item_my_quiz_set, p, false);
             return new VHItem(v);
         }
     }
@@ -68,9 +81,18 @@ public class MyQuizzesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             vh.terms.setText(String.format(Locale.getDefault(), "%d questions", s.getQuestionCount()));
             vh.username.setText(s.username);
 
+            vh.btnDelete.setVisibility(View.VISIBLE);
+
             vh.itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onItemClick(s);
+                }
+            });
+
+            vh.btnDelete.setOnClickListener(v -> {
+                if (listener != null) {
+                    // Lấy vị trí adapter hiện tại
+                    listener.onDeleteClick(s, h.getAdapterPosition());
                 }
             });
         }
@@ -86,11 +108,13 @@ public class MyQuizzesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     static class VHItem extends RecyclerView.ViewHolder {
         TextView title, terms, username;
+        ImageButton btnDelete;
         VHItem(View v) {
             super(v);
             title = v.findViewById(R.id.tv_title);
             terms = v.findViewById(R.id.tv_terms);
             username = v.findViewById(R.id.tv_username);
+            btnDelete = v.findViewById(R.id.btn_delete_quiz);
         }
     }
 }

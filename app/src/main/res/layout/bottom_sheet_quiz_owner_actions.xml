@@ -16,20 +16,4 @@
         android:focusable="true"
         android:background="?attr/selectableItemBackground" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E0E0E0" />
-
-    <TextView
-        android:id="@+id/bs_quiz_delete"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete Quiz"
-        android:textSize="18sp"
-        android:padding="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:textColor="#F44336"
-        android:background="?attr/selectableItemBackground" />
 </LinearLayout>

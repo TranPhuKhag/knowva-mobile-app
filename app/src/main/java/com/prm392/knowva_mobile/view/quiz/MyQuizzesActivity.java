@@ -17,6 +17,7 @@ import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
 import com.prm392.knowva_mobile.repository.QuizRepository;
 import com.prm392.knowva_mobile.view.HomeActivity;
 import com.prm392.knowva_mobile.view.flashcard.FlashcardBottomSheet;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,10 +62,20 @@ public class MyQuizzesActivity extends AppCompatActivity {
         adapter = new MyQuizzesAdapter();
         rv.setAdapter(adapter);
 
-        adapter.setOnItemClickListener(set -> {
-            Intent intent = new Intent(MyQuizzesActivity.this, QuizDetailActivity.class);
-            intent.putExtra(QuizDetailActivity.QUIZ_ID_KEY, set.id);
-            startActivity(intent);
+        adapter.setOnItemClickListener(new MyQuizzesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(MyQuizSetResponse set) {
+                // Mở trang chi tiết (như cũ)
+                Intent intent = new Intent(MyQuizzesActivity.this, QuizDetailActivity.class);
+                intent.putExtra(QuizDetailActivity.QUIZ_ID_KEY, set.id);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onDeleteClick(MyQuizSetResponse set, int position) {
+                // Hiển thị dialog xác nhận
+                showDeleteConfirmation(set, position);
+            }
         });
 
         // --- Bottom Navigation ---
@@ -93,7 +104,7 @@ public class MyQuizzesActivity extends AppCompatActivity {
         });
 
         // --- Tải dữ liệu ---
-        fetchMyQuizzes();
+//        fetchMyQuizzes();
     }
 
     @Override
@@ -102,6 +113,42 @@ public class MyQuizzesActivity extends AppCompatActivity {
         // Tải lại dữ liệu mỗi khi quay lại màn hình này
         // để nhận được các thay đổi mới nhất sau khi edit.
         fetchMyQuizzes();
+    }
+
+    private void showDeleteConfirmation(MyQuizSetResponse set, int position) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có chắc muốn xóa bộ quiz \"" + set.title + "\"?")
+                .setNegativeButton("Hủy", null)
+                .setPositiveButton("Xóa", (dialog, which) -> {
+                    // 1. Xóa ngay lập tức khỏi UI
+                    adapter.removeItem(position);
+
+                    // 2. Gọi API để xóa
+                    callDeleteApi(set.id);
+                })
+                .show();
+    }
+
+    private void callDeleteApi(long quizId) {
+        quizRepository.deleteQuizSet(quizId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(MyQuizzesActivity.this, "Đã xóa quiz", Toast.LENGTH_SHORT).show();
+                    // UI đã được cập nhật rồi, không cần làm gì thêm
+                } else {
+                    Toast.makeText(MyQuizzesActivity.this, "Lỗi khi xóa, đang làm mới...", Toast.LENGTH_SHORT).show();
+                    fetchMyQuizzes(); // Tải lại danh sách nếu API lỗi
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(MyQuizzesActivity.this, "Lỗi mạng, đang làm mới...", Toast.LENGTH_SHORT).show();
+                fetchMyQuizzes(); // Tải lại danh sách nếu mạng lỗi
+            }
+        });
     }
 
     private void fetchMyQuizzes() {

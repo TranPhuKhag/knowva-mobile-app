@@ -8,11 +8,14 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
-
+import retrofit2.http.DELETE;
 public interface QuizService {
+
+    @Headers("Cache-Control: no-cache")
     @GET("quiz-sets/my-quiz-sets")
     Call<List<MyQuizSetResponse>> getMyQuizSets();
 
@@ -27,4 +30,7 @@ public interface QuizService {
             @Path("quizSetId") long quizSetId,
             @Body CreateQuizRequest body
     );
+
+    @DELETE("quiz-sets/{id}")
+    Call<Void> deleteQuizSet(@Path("id") long id);
 }
