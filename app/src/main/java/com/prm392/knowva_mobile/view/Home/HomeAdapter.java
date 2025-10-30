@@ -1,10 +1,12 @@
 package com.prm392.knowva_mobile.view.Home;
 
+import android.widget.VideoView;
+import android.net.Uri;
+import android.util.Log;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -104,27 +106,46 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // --- ViewHolder Classes ---
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {
-        TextView tvGreeting, tvStreak, tvProgressText;
-        ProgressBar pbDailyGoal;
+        TextView tvGreeting;
+        VideoView videoView; // Thêm VideoView
 
         BannerViewHolder(@NonNull View itemView) {
             super(itemView);
             tvGreeting = itemView.findViewById(R.id.tv_greeting);
-            tvStreak = itemView.findViewById(R.id.tv_streak);
-            tvProgressText = itemView.findViewById(R.id.tv_progress_text);
-            pbDailyGoal = itemView.findViewById(R.id.pb_daily_goal);
+            videoView = itemView.findViewById(R.id.video_view_banner); // Tìm VideoView bằng ID
         }
 
         void bind(HomeScreenItem.Banner bannerItem) {
+            // 1. Gán text chào mừng
             String greetingText = "Chào bạn, " + bannerItem.userName + "!";
-            String streakText = "Chuỗi " + bannerItem.streak + " ngày học 🔥";
-            String progressText = bannerItem.dailyProgress + "/" + bannerItem.dailyGoal + " thẻ";
-
             tvGreeting.setText(greetingText);
-            tvStreak.setText(streakText);
-            tvProgressText.setText(progressText);
-            pbDailyGoal.setMax(bannerItem.dailyGoal);
-            pbDailyGoal.setProgress(bannerItem.dailyProgress);
+
+            // 2. Thiết lập và phát video
+            try {
+                android.content.Context context = itemView.getContext();
+
+                // Tạo đường dẫn Uri đến tệp trong res/raw
+                String path = "android.resource://" + context.getPackageName() + "/" + R.raw.hello;
+                Uri uri = Uri.parse(path);
+
+                videoView.setVideoURI(uri);
+
+                // Xóa các nút điều khiển mặc định
+                videoView.setMediaController(null);
+
+                // Tắt tiếng và lặp lại video khi nó đã sẵn sàng
+                videoView.setOnPreparedListener(mp -> {
+                    mp.setVolume(0f, 0f); // Tắt tiếng
+                    mp.setLooping(true);    // Tự động lặp lại
+                });
+
+                // Bắt đầu phát
+                videoView.start();
+
+            } catch (Exception e) {
+                // Ghi log nếu có lỗi (ví dụ: không tìm thấy tệp video)
+                Log.e("BannerViewHolder", "Lỗi khi phát video", e);
+            }
         }
     }
 

@@ -9,10 +9,6 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_profile"
             android:title="Hồ sơ" />
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings"
-            android:title="Cài đặt" />
     </group>
 
     <item android:title="Khác">

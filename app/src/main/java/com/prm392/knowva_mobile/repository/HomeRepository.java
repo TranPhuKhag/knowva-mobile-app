@@ -16,7 +16,7 @@ public class HomeRepository {
     }
 
     // Phương thức cung cấp dữ liệu (hiện tại là mock data)
-    public List<HomeScreenItem> getHomeItems() {
+    public List<HomeScreenItem> getHomeItems(String userName) {
         List<HomeScreenItem> items = new ArrayList<>();
 
         // Dữ liệu giả cho các danh sách
@@ -30,7 +30,7 @@ public class HomeRepository {
         authorSets.add(new FlashcardSet("4", "NodeJS cơ bản", "Jane Smith", 120));
 
         // 1. Thêm Banner
-        items.add(new HomeScreenItem.Banner("Van Hao", 7, 25, 50));
+        items.add(new HomeScreenItem.Banner(userName));
 
         // 2. Thêm Tiêu đề và danh sách "Tiếp tục học"
         items.add(new HomeScreenItem.Header("Tiếp tục học"));

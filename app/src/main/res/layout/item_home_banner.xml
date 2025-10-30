@@ -13,53 +13,29 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_banner_background"
+        android:background="@color/on_primary"
         android:padding="20dp">
 
         <TextView
             android:id="@+id/tv_greeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:textColor="@color/black"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Chào buổi tối, Hào!" />
+            tools:text="Xin chào, user!" />
 
-        <TextView
-            android:id="@+id/tv_streak"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_greeting"
-            tools:text="Chuỗi 5 ngày học 🔥" />
-
-        <ProgressBar
-            android:id="@+id/pb_daily_goal"
-            style="?android:attr/progressBarStyleHorizontal"
+        <VideoView
+            android:id="@+id/video_view_banner"
             android:layout_width="0dp"
-            android:layout_height="8dp"
+            android:layout_height="120dp"
             android:layout_marginTop="16dp"
-            android:progressDrawable="@drawable/custom_progress_bar"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_greeting"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_streak"
-            tools:progress="50" />
-
-        <TextView
-            android:id="@+id/tv_progress_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/white"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pb_daily_goal"
-            tools:text="25/50 thẻ" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

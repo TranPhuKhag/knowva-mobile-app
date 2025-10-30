@@ -37,6 +37,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.prm392.knowva_mobile.view.quiz.QuizBottomSheet;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -78,8 +79,6 @@ public class HomeActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
-            } else if (itemId == R.id.nav_settings) {
-                Toast.makeText(HomeActivity.this, "Cài đặt", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.nav_logout) {
                 performLogout();
             }
@@ -104,7 +103,7 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
             if (id == R.id.menu_bottom_quiz) {
-                Toast.makeText(this, "Quiz", Toast.LENGTH_SHORT).show();
+                new QuizBottomSheet().show(getSupportFragmentManager(), "QuizBottomSheet");
                 return true;
             }
             return false;
@@ -174,7 +173,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        List<HomeScreenItem> items = homeRepository.getHomeItems();
+        String realUserName = sessionManager.getFullName();
+        List<HomeScreenItem> items = homeRepository.getHomeItems(realUserName);
         homeAdapter.setItems(items);
         loadSuggestedSets(items);
     }

@@ -11,15 +11,9 @@ public abstract class HomeScreenItem {
     // 1. Dữ liệu cho banner chào mừng
     public static final class Banner extends HomeScreenItem {
         public final String userName;
-        public final int streak;
-        public final int dailyProgress;
-        public final int dailyGoal;
 
-        public Banner(String userName, int streak, int dailyProgress, int dailyGoal) {
+        public Banner(String userName) {
             this.userName = userName;
-            this.streak = streak;
-            this.dailyProgress = dailyProgress;
-            this.dailyGoal = dailyGoal;
         }
     }
 
