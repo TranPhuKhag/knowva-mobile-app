@@ -36,5 +36,6 @@
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.ProfileActivity" />
         <activity android:name=".view.quiz.GenerateQuizActivity" />
+        <activity android:name=".view.quiz.MyQuizzesActivity" />
     </application>
 </manifest>

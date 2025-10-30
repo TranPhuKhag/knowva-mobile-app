@@ -44,7 +44,8 @@ public class QuizBottomSheet extends BottomSheetDialogFragment {
 
         // Tạm thời hiển thị Toast
         tvMyQuiz.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Mở Quiz của tôi", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(requireContext(), MyQuizzesActivity.class);
+            startActivity(intent);
             // Ví dụ: Intent intent = new Intent(requireContext(), MyQuizzesActivity.class);
             // startActivity(intent);
             dismiss();
