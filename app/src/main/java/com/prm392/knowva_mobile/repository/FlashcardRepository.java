@@ -44,8 +44,4 @@ public class FlashcardRepository {
     public Call<FlashcardSet> updateSet(long id, UpdateSetRequest body) {
         return service.updateSet(id, body);
     }
-
-    public Call<Void> generateQuiz(long flashcardSetId) {
-        return service.generateQuiz(flashcardSetId);
-    }
 }

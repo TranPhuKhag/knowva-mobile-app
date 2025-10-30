@@ -5,6 +5,7 @@ import android.content.Context;
 import com.prm392.knowva_mobile.factory.APIClient;
 import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
 import com.prm392.knowva_mobile.service.QuizService;
+import com.prm392.knowva_mobile.model.request.quiz.CreateQuizRequest;
 
 import java.util.List;
 
@@ -21,5 +22,9 @@ public class QuizRepository {
 
     public Call<List<MyQuizSetResponse>> getMyQuizSets() {
         return service.getMyQuizSets();
+    }
+
+    public Call<Void> saveQuizSet(CreateQuizRequest body) {
+        return service.saveQuizSet(body);
     }
 }

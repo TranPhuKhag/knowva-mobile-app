@@ -37,7 +37,7 @@ public class QuizBottomSheet extends BottomSheetDialogFragment {
 
         // Tạm thời hiển thị Toast (bạn có thể thay bằng Intent sau)
         tvQuizSet.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), GenerateQuizActivity.class);
+            Intent intent = new Intent(requireContext(), CreateQuizActivity.class);
             startActivity(intent);
             dismiss();
         });
