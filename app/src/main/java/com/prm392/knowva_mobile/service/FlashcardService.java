@@ -36,4 +36,7 @@ public interface FlashcardService {
         @Path("id") long id,
         @Body UpdateSetRequest body
     );
+
+    @POST("flashcard-sets/{flashcardSetId}/generate-quiz")
+    Call<Void> generateQuiz(@Path("flashcardSetId") long flashcardSetId);
 }
