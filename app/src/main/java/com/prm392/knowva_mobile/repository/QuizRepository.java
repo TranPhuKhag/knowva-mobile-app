@@ -27,4 +27,8 @@ public class QuizRepository {
     public Call<Void> saveQuizSet(CreateQuizRequest body) {
         return service.saveQuizSet(body);
     }
+
+    public Call<MyQuizSetResponse> getQuizSetById(long id) {
+        return service.getQuizSetById(id);
+    }
 }

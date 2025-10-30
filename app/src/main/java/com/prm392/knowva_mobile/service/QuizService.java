@@ -9,6 +9,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface QuizService {
     @GET("quiz-sets/my-quiz-sets")
@@ -16,4 +17,7 @@ public interface QuizService {
 
     @POST("quiz-sets/save")
     Call<Void> saveQuizSet(@Body CreateQuizRequest body);
+
+    @GET("quiz-sets/{id}")
+    Call<MyQuizSetResponse> getQuizSetById(@Path("id") long id);
 }

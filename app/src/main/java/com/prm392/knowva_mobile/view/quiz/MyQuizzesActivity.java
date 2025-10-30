@@ -62,8 +62,9 @@ public class MyQuizzesActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         adapter.setOnItemClickListener(set -> {
-            // TODO: Mở màn hình chi tiết Quiz (khi có)
-            Toast.makeText(MyQuizzesActivity.this, "Mở quiz: " + set.title, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MyQuizzesActivity.this, QuizDetailActivity.class);
+            intent.putExtra(QuizDetailActivity.QUIZ_ID_KEY, set.id);
+            startActivity(intent);
         });
 
         // --- Bottom Navigation ---

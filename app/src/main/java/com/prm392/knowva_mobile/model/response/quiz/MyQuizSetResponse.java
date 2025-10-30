@@ -11,12 +11,20 @@ public class MyQuizSetResponse {
     public String description;
     public String createdAt;
     public String updatedAt;
-    public List<Question> questions; // Giả định có danh sách câu hỏi
+    public List<Question> questions;
 
     public static class Question {
         public long id;
         public String questionText;
-        // Thêm các trường khác nếu cần
+        public String imageUrl; // <-- THÊM TRƯỜNG NÀY
+        public int order;       // <-- THÊM TRƯỜNG NÀY
+        public List<Answer> answers; // <-- THÊM TRƯỜNG NÀY
+    }
+
+    public static class Answer {
+        public long id; // Giả sử API trả về ID
+        public String answerText;
+        public boolean isCorrect;
     }
 
     // Helper để lấy số lượng câu hỏi
