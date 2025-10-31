@@ -16,6 +16,7 @@ public class CreateQuizRequest {
     public List<Question> questions;
 
     public static class Question {
+        public long id = 0;
         public String questionText;
         public String imageUrl;
         public int timeLimit = 0;
@@ -24,6 +25,7 @@ public class CreateQuizRequest {
     }
 
     public static class Answer {
+        public long id = 0;
         public String answerText;
         public boolean isCorrect;
     }

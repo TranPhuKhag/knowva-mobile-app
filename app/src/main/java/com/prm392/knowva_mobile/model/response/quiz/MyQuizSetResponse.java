@@ -17,6 +17,8 @@ public class MyQuizSetResponse {
     public String questionType;
     public String category;
     public String visibility;
+    public String sourceType;
+    public String language;
     public static class Question {
         public long id;
         public String questionText;

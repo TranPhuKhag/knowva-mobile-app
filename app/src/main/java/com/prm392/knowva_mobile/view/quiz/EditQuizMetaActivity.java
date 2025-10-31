@@ -97,7 +97,7 @@ public class EditQuizMetaActivity extends AppCompatActivity {
     private void prefillMeta() {
         if (originalQuiz == null) return;
 
-        if ("PRIVATE".equals(originalQuiz.description)) {
+        if ("PRIVATE".equals(originalQuiz.visibility)) {
             rbPrivate.setChecked(true);
         } else {
             rbPublic.setChecked(true);
@@ -116,7 +116,8 @@ public class EditQuizMetaActivity extends AppCompatActivity {
         request.visibility = rbPublic.isChecked() ? "PUBLIC" : "PRIVATE";
         request.questionType = textOf(actQuestionType, "MULTIPLE_CHOICE");
         request.category = textOf(actCategory, "OTHER");
-
+        request.language = orEmpty(originalQuiz.language, "VIETNAMESE");
+        request.sourceType = orEmpty(originalQuiz.sourceType, "TEXT");
         try {
             request.timeLimit = Integer.parseInt(textOf(etTimeLimit, "0"));
         } catch (NumberFormatException e) {
@@ -128,12 +129,14 @@ public class EditQuizMetaActivity extends AppCompatActivity {
         int order = 1;
         for (QuizQuestionDraft draft : questionsDraft) {
             CreateQuizRequest.Question q = new CreateQuizRequest.Question();
+            q.id = draft.id;
             q.questionText = draft.questionText;
             q.order = order++;
             q.answers = new ArrayList<>();
             for (QuizAnswerDraft ansDraft : draft.answers) {
                 if (ansDraft.isValid()) {
                     CreateQuizRequest.Answer a = new CreateQuizRequest.Answer();
+                    a.id = ansDraft.id;
                     a.answerText = ansDraft.answerText;
                     a.isCorrect = ansDraft.isCorrect;
                     q.answers.add(a);
@@ -177,5 +180,8 @@ public class EditQuizMetaActivity extends AppCompatActivity {
     private String textOf(EditText editText, String defaultValue) {
         String text = editText.getText() == null ? "" : editText.getText().toString().trim();
         return text.isEmpty() ? defaultValue : text;
+    }
+    private String orEmpty(String value, String defaultValue) {
+        return (value != null && !value.isEmpty()) ? value : defaultValue;
     }
 }

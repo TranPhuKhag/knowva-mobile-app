@@ -2,6 +2,11 @@ package com.prm392.knowva_mobile.service;
 
 import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
 import com.prm392.knowva_mobile.model.request.quiz.CreateQuizRequest;
+import com.prm392.knowva_mobile.model.request.quiz.SubmitAnswerRequest;
+import com.prm392.knowva_mobile.model.response.quiz.QuizAttemptQuestion;
+import com.prm392.knowva_mobile.model.response.quiz.QuizAttemptResponse;
+import com.prm392.knowva_mobile.model.response.quiz.QuizAttempt;
+import com.prm392.knowva_mobile.model.response.quiz.QuizReviewResponse;
 
 import java.util.List;
 
@@ -33,4 +38,18 @@ public interface QuizService {
 
     @DELETE("quiz-sets/{id}")
     Call<Void> deleteQuizSet(@Path("id") long id);
+    @GET("quiz-attempts/{quizSetId}/start") // Đổi @POST thành @GET
+    Call<QuizAttemptResponse> startAttempt(
+            @Path("quizSetId") long quizSetId
+            // Xóa @Body Object emptyBody
+    );
+
+    @POST("quiz-attempts/{attemptId}/submit")
+    Call<QuizAttempt> submitAttempt(
+            @Path("attemptId") long attemptId,
+            @Body List<SubmitAnswerRequest> body
+    );
+
+    @GET("quiz-attempts/{attemptId}/review")
+    Call<QuizReviewResponse> reviewAttempt(@Path("attemptId") long attemptId);
 }

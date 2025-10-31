@@ -3,7 +3,11 @@ package com.prm392.knowva_mobile.repository;
 import android.content.Context;
 
 import com.prm392.knowva_mobile.factory.APIClient;
+import com.prm392.knowva_mobile.model.request.quiz.SubmitAnswerRequest;
 import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
+import com.prm392.knowva_mobile.model.response.quiz.QuizAttempt;
+import com.prm392.knowva_mobile.model.response.quiz.QuizAttemptQuestion;
+import com.prm392.knowva_mobile.model.response.quiz.QuizAttemptResponse;
 import com.prm392.knowva_mobile.service.QuizService;
 import com.prm392.knowva_mobile.model.request.quiz.CreateQuizRequest;
 
@@ -11,6 +15,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import com.prm392.knowva_mobile.model.response.quiz.QuizReviewResponse;
 
 public class QuizRepository {
     private QuizService service;
@@ -37,5 +42,17 @@ public class QuizRepository {
     }
     public Call<Void> deleteQuizSet(long id) {
         return service.deleteQuizSet(id);
+    }
+
+    public Call<QuizAttemptResponse> startAttempt(long quizSetId) {
+        return service.startAttempt(quizSetId);
+    }
+
+    public Call<QuizAttempt> submitAttempt(long attemptId, List<SubmitAnswerRequest> body) {
+        return service.submitAttempt(attemptId, body);
+    }
+
+    public Call<QuizReviewResponse> reviewAttempt(long attemptId) {
+        return service.reviewAttempt(attemptId);
     }
 }

@@ -82,11 +82,13 @@ public class EditQuizActivity extends AppCompatActivity {
         // Chuyển đổi từ Response sang Draft
         for (MyQuizSetResponse.Question q : originalQuiz.questions) {
             QuizQuestionDraft draft = new QuizQuestionDraft();
+            draft.id = q.id;
             draft.questionText = q.questionText;
             draft.answers.clear(); // Xóa 2 câu trả lời rỗng mặc định
             if (q.answers != null) {
                 for (MyQuizSetResponse.Answer a : q.answers) {
                     QuizAnswerDraft ansDraft = new QuizAnswerDraft();
+                    ansDraft.id = a.id;
                     ansDraft.answerText = a.answerText;
                     ansDraft.isCorrect = a.isCorrect;
                     draft.answers.add(ansDraft);

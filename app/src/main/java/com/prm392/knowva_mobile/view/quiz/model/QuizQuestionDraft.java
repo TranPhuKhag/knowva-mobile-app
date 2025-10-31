@@ -6,6 +6,7 @@ import java.util.List;
 
 // Dữ liệu nháp cho một câu hỏi
 public class QuizQuestionDraft implements Serializable {
+    public long id = 0;
     public String questionText = "";
     public List<QuizAnswerDraft> answers = new ArrayList<>();
 

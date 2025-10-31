@@ -25,6 +25,7 @@ import com.prm392.knowva_mobile.manager.SessionManager;
 
 import java.util.Locale;
 
+import com.prm392.knowva_mobile.model.response.quiz.QuizAttemptResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -78,14 +79,40 @@ public class QuizDetailActivity extends AppCompatActivity {
         adapter = new QuizDetailAdapter(this);
         rvQuestions.setAdapter(adapter);
 
+        btnStartQuiz = findViewById(R.id.btn_start_quiz);
+
         // --- Nút bắt đầu ---
         btnStartQuiz.setOnClickListener(v -> {
-            // TODO: Chuyển sang màn hình làm quiz
-            Toast.makeText(this, "Bắt đầu làm quiz (chưa implement)", Toast.LENGTH_SHORT).show();
+            startQuiz();
         });
 
         // --- Tải dữ liệu ---
         fetchQuizDetails();
+    }
+
+    private void startQuiz() {
+        Toast.makeText(this, "Đang bắt đầu...", Toast.LENGTH_SHORT).show();
+        btnStartQuiz.setEnabled(false);
+
+        quizRepository.startAttempt(quizId).enqueue(new Callback<QuizAttemptResponse>() {
+            @Override
+            public void onResponse(Call<QuizAttemptResponse> call, Response<QuizAttemptResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Intent intent = new Intent(QuizDetailActivity.this, QuizAttemptActivity.class);
+                    intent.putExtra(QuizAttemptActivity.ATTEMPT_RESPONSE_JSON, new Gson().toJson(response.body()));
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(QuizDetailActivity.this, "Không thể bắt đầu quiz: " + response.code(), Toast.LENGTH_LONG).show();
+                }
+                btnStartQuiz.setEnabled(true);
+            }
+
+            @Override
+            public void onFailure(Call<QuizAttemptResponse> call, Throwable t) {
+                Toast.makeText(QuizDetailActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                btnStartQuiz.setEnabled(true);
+            }
+        });
     }
 
     @Override
