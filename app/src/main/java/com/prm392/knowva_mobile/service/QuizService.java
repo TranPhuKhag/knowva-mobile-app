@@ -52,4 +52,7 @@ public interface QuizService {
 
     @GET("quiz-attempts/{attemptId}/review")
     Call<QuizReviewResponse> reviewAttempt(@Path("attemptId") long attemptId);
+
+    @GET("quiz-sets/all")
+    Call<List<MyQuizSetResponse>> getAllQuizSets();
 }

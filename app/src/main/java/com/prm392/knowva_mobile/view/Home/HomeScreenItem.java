@@ -3,6 +3,7 @@ package com.prm392.knowva_mobile.view.Home;
 import com.prm392.knowva_mobile.model.FlashcardSet;
 import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import java.util.List;
+import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
 
 // Lớp cha trừu tượng để định nghĩa các loại item trên màn hình chính
 public abstract class HomeScreenItem {
@@ -45,5 +46,10 @@ public abstract class HomeScreenItem {
     public static final class SuggestedSets extends HomeScreenItem {
         public final List<MyFlashcardSetResponse> sets;
         public SuggestedSets(List<MyFlashcardSetResponse> sets) { this.sets = sets; }
+    }
+
+    public static final class QuizSets extends HomeScreenItem {
+        public final List<MyQuizSetResponse> sets;
+        public QuizSets(List<MyQuizSetResponse> sets) { this.sets = sets; }
     }
 }

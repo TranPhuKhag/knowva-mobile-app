@@ -55,4 +55,7 @@ public class QuizRepository {
     public Call<QuizReviewResponse> reviewAttempt(long attemptId) {
         return service.reviewAttempt(attemptId);
     }
+    public Call<List<MyQuizSetResponse>> getAllQuizSets() {
+        return service.getAllQuizSets();
+    }
 }

@@ -19,6 +19,7 @@ import com.prm392.knowva_mobile.view.Home.HomeScreenItem;
 import com.prm392.knowva_mobile.view.flashcard.FlashcardViewerActivity;
 
 import java.util.List;
+import com.prm392.knowva_mobile.view.Home.SuggestedQuizAdapter;
 
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -29,6 +30,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 3;
     private static final int TYPE_RECOMMENDED = 4;
     private static final int TYPE_SUGGESTED_SETS = 5;
+    private static final int TYPE_QUIZ_SETS = 6;
 
     private List<HomeScreenItem> items;
 
@@ -46,6 +48,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (item instanceof HomeScreenItem.Header) return TYPE_HEADER;
         if (item instanceof HomeScreenItem.RecommendedSet) return TYPE_RECOMMENDED;
         if (item instanceof HomeScreenItem.SuggestedSets) return TYPE_SUGGESTED_SETS;
+        if (item instanceof HomeScreenItem.QuizSets) return TYPE_QUIZ_SETS;
         return -1;
     }
 
@@ -66,6 +69,8 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new RecommendedSetViewHolder(inflater.inflate(R.layout.item_recommended_set, parent, false));
             case TYPE_SUGGESTED_SETS:
                 return new SuggestedSetsViewHolder(inflater.inflate(R.layout.item_suggested_sets_container, parent, false));
+            case TYPE_QUIZ_SETS:
+                return new QuizSetsViewHolder(inflater.inflate(R.layout.item_suggested_sets_container, parent, false));
             default:
                 throw new IllegalArgumentException("Invalid view type");
         }
@@ -95,6 +100,27 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case TYPE_SUGGESTED_SETS:
                 ((SuggestedSetsViewHolder) holder).bind((HomeScreenItem.SuggestedSets) item);
                 break;
+            case TYPE_QUIZ_SETS:
+                ((QuizSetsViewHolder) holder).bind((HomeScreenItem.QuizSets) item);
+                break;
+        }
+    }
+
+    static class QuizSetsViewHolder extends RecyclerView.ViewHolder {
+        RecyclerView rvSuggestedQuizzes;
+
+        QuizSetsViewHolder(@NonNull View itemView) {
+            super(itemView);
+            // Dùng ID từ 'item_suggested_sets_container.xml'
+            rvSuggestedQuizzes = itemView.findViewById(R.id.rv_suggested_sets);
+        }
+
+        void bind(HomeScreenItem.QuizSets item) {
+            rvSuggestedQuizzes.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            // Dùng adapter mới 'SuggestedQuizAdapter'
+            SuggestedQuizAdapter adapter = new SuggestedQuizAdapter();
+            rvSuggestedQuizzes.setAdapter(adapter);
+            adapter.submit(item.sets);
         }
     }
 
