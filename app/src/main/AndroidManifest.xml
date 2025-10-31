@@ -35,5 +35,22 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.ProfileActivity" />
+        <activity android:name=".view.quiz.MyQuizzesActivity" />
+        <activity
+            android:name=".view.quiz.CreateQuizActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".view.quiz.CreateQuizMetaActivity" />
+        <activity android:name=".view.quiz.QuizDetailActivity" />
+        <activity
+            android:name=".view.quiz.EditQuizActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".view.quiz.EditQuizMetaActivity" />
+        <activity
+            android:name=".view.quiz.QuizAttemptActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".view.quiz.QuizReviewActivity" />
     </application>
 </manifest>

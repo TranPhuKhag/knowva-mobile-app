@@ -38,6 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import com.prm392.knowva_mobile.view.quiz.QuizBottomSheet;
+import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -50,6 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeRepository homeRepository;
     private ActionBarDrawerToggle toggle;
     private SessionManager sessionManager;
+    private List<HomeScreenItem> baseHomeItems;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -174,12 +176,49 @@ public class HomeActivity extends AppCompatActivity {
 
     private void loadData() {
         String realUserName = sessionManager.getFullName();
-        List<HomeScreenItem> items = homeRepository.getHomeItems(realUserName);
-        homeAdapter.setItems(items);
-        loadSuggestedSets(items);
+        // 1. Tải các item CỐ ĐỊNH (Banner, Header "Flashcard gợi ý")
+        baseHomeItems = homeRepository.getHomeItems(realUserName);
+        homeAdapter.setItems(baseHomeItems); // Hiển thị tạm thời
+
+        // 2. Tải các item ĐỘNG (từ API)
+        loadAllQuizzes(); // Gọi API quiz
+        loadSuggestedSets();
     }
 
-    private void loadSuggestedSets(List<HomeScreenItem> currentItems) {
+    private void loadAllQuizzes() {
+        homeRepository.getAllQuizSets().enqueue(new Callback<List<MyQuizSetResponse>>() {
+            @Override
+            public void onResponse(Call<List<MyQuizSetResponse>> call, Response<List<MyQuizSetResponse>> res) {
+                if (res.isSuccessful() && res.body() != null && !res.body().isEmpty()) {
+                    List<MyQuizSetResponse> allQuizzes = res.body();
+
+                    // Tìm vị trí của "Flashcard gợi ý"
+                    int flashcardHeaderIndex = -1;
+                    for (int i = 0; i < baseHomeItems.size(); i++) {
+                        HomeScreenItem item = baseHomeItems.get(i);
+                        if (item instanceof HomeScreenItem.Header && ((HomeScreenItem.Header) item).title.equals("Flashcard gợi ý")) {
+                            flashcardHeaderIndex = i;
+                            break;
+                        }
+                    }
+
+                    // Chèn Header và List Quiz vào *trước* "Flashcard gợi ý"
+                    int insertionIndex = (flashcardHeaderIndex != -1) ? flashcardHeaderIndex : baseHomeItems.size();
+
+                    baseHomeItems.add(insertionIndex, new HomeScreenItem.Header("Quiz gợi ý"));
+                    baseHomeItems.add(insertionIndex + 1, new HomeScreenItem.QuizSets(allQuizzes));
+
+                    homeAdapter.notifyDataSetChanged(); // Cập nhật UI
+                }
+            }
+            @Override
+            public void onFailure(Call<List<MyQuizSetResponse>> call, Throwable t) {
+                // Bỏ qua lỗi
+            }
+        });
+    }
+
+    private void loadSuggestedSets() {
         homeRepository.getAllSets().enqueue(new Callback<List<MyFlashcardSetResponse>>() {
             @Override
             public void onResponse(Call<List<MyFlashcardSetResponse>> call, Response<List<MyFlashcardSetResponse>> res) {
@@ -189,10 +228,8 @@ public class HomeActivity extends AppCompatActivity {
                 int limit = Math.min(4, all.size());
                 List<MyFlashcardSetResponse> suggestedList = all.subList(0, limit);
 
-                List<HomeScreenItem> updatedItems = new ArrayList<>(currentItems);
-                updatedItems.add(new HomeScreenItem.SuggestedSets(suggestedList));
-
-                homeAdapter.setItems(updatedItems);
+                baseHomeItems.add(new HomeScreenItem.SuggestedSets(suggestedList));
+                homeAdapter.notifyDataSetChanged(); // Cập nhật UI
             }
 
             @Override

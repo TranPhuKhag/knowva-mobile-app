@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,14 +37,15 @@ public class QuizBottomSheet extends BottomSheetDialogFragment {
 
         // Tạm thời hiển thị Toast (bạn có thể thay bằng Intent sau)
         tvQuizSet.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Mở tạo Quiz set", Toast.LENGTH_SHORT).show();
-            // Ví dụ: startActivity(new Intent(requireContext(), CreateQuizActivity.class));
+            Intent intent = new Intent(requireContext(), CreateQuizActivity.class);
+            startActivity(intent);
             dismiss();
         });
 
         // Tạm thời hiển thị Toast
         tvMyQuiz.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Mở Quiz của tôi", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(requireContext(), MyQuizzesActivity.class);
+            startActivity(intent);
             // Ví dụ: Intent intent = new Intent(requireContext(), MyQuizzesActivity.class);
             // startActivity(intent);
             dismiss();
