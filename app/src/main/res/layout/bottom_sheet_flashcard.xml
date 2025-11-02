@@ -4,6 +4,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
+    <ImageView
+        android:id="@+id/img_quiz_shiba"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/flashcard_shiba"
+        android:adjustViewBounds="true"/>
 
     <TextView
         android:id="@+id/tv_flashcard_set"
