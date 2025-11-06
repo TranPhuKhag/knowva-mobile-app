@@ -77,7 +77,7 @@ public class QuizReviewActivity extends AppCompatActivity {
         // Làm tròn điểm về số nguyên
         int intScore = (int) Math.round(score);
 
-        tvScoreResult.setText(String.format(Locale.getDefault(), "Điểm của bạn: %d", intScore));
+        tvScoreResult.setText(String.format(Locale.getDefault(), "Điểm của bạn: %d/100", intScore));
         tvScoreResult.setVisibility(View.VISIBLE);
 
         // Logic hiển thị ảnh
