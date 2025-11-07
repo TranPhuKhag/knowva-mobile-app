@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back_24"
+        app:title="" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvSetTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/on_surface"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    tools:text="Tiêu đề Quiz" />
+
+                <TextView
+                    android:id="@+id/tvSetDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="15sp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    tools:text="Đây là mô tả chi tiết cho bộ quiz." />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:id="@+id/tvUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="14sp"
+                        tools:text="Tác giả" />
+
+                    <TextView
+                        android:id="@+id/tvQuestionsCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="14sp"
+                        tools:text="10 câu hỏi" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_start_quiz"
+                style="@style/Widget.Knowva.LoginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Bắt đầu làm Quiz"
+                android:textColor="@color/primary"
+                android:backgroundTint="@color/on_primary"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Knowva.Pill"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/outline"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Danh sách câu hỏi"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/on_surface"
+                android:padding="16dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_questions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                tools:listitem="@layout/item_quiz_question_detail"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

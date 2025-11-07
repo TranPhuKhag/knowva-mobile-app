@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">knowva-mobile</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="login_title">Log in</string>
+    <string name="email_or_username">Email or username</string>
+    <string name="password">Password</string>
+    <string name="login">Log in</string>
+    <string name="forgot_password">Forgot password</string>
+
+    <string name="go_to_register">Don\'t have an account? <b>Register</b></string>
 </resources>

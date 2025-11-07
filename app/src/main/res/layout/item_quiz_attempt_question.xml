@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tv_question_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/on_surface"
+        android:layout_marginBottom="16dp"
+        tools:text="Câu hỏi ở đây?" />
+
+    <ImageView
+        android:id="@+id/img_question"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        tools:src="@drawable/logo" />
+
+    <RadioGroup
+        android:id="@+id/rg_answers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

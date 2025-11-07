@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
+    android:layout_gravity="center"
+    app:cardCornerRadius="16dp"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="4dp">
+
+    <FrameLayout
+        android:id="@+id/flCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp">
+
+        <!-- FRONT -->
+        <ScrollView
+            android:id="@+id/faceFront"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:descendantFocusability="blocksDescendants"
+            android:clickable="false">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/imgFront"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tvFront"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:textColor="@color/on_surface"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- BACK -->
+        <ScrollView
+            android:id="@+id/faceBack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:descendantFocusability="blocksDescendants"
+            android:clickable="false"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/on_surface"
+                android:gravity="center"/>
+        </ScrollView>
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>
