@@ -36,4 +36,14 @@ public class AuthRepository {
     public Call<UserProfileResponse> getUserProfile() {
         return userService.getUserProfile();
     }
+
+    // --- THÊM MỚI ---
+    public Call<Void> sendVerifyOtp(String email) {
+        return authService.sendVerifyOtp(email);
+    }
+
+    public Call<Void> verifyEmail(String email, String otp) {
+        return authService.verifyEmail(email, otp);
+    }
+    // --- KẾT THÚC THÊM MỚI ---
 }
