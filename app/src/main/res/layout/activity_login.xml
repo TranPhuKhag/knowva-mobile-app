@@ -29,7 +29,6 @@
 
 
 
-        <!-- Title (không có nút back) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +39,6 @@
             android:layout_marginTop="@dimen/space_16"
             android:layout_marginBottom="@dimen/space_24"/>
 
-        <!-- Email/Username -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEmail"
             style="@style/Widget.Knowva.FilledInput"
@@ -61,7 +59,6 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Password -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPassword"
             style="@style/Widget.Knowva.FilledInput"
@@ -85,7 +82,6 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Login Button (giữ id cũ) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             style="@style/Widget.Knowva.LoginButton"
@@ -98,7 +94,6 @@
             android:layout_marginTop="@dimen/space_24"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Knowva.Pill" />
 
-        <!-- Forgot password (tận dụng txtRegister) -->
         <TextView
             android:id="@+id/txtRegister"
             android:layout_width="wrap_content"
@@ -108,5 +103,15 @@
             android:textStyle="bold"
             android:layout_marginTop="@dimen/space_16"
             android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/tvGoToRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/go_to_register"
+            android:textColor="@color/on_surface_variant"
+            android:layout_marginTop="@dimen/space_12"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"/>
     </LinearLayout>
 </ScrollView>

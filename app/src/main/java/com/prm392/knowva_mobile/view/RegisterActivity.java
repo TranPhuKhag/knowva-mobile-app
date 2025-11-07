@@ -49,34 +49,50 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Invalid email address", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        btnSignUp.setEnabled(false);
+        btnSignUp.setText("Registering...");
+
         SignUp signUpData = new SignUp(username, email, password);
 
-        // Thay đổi kiểu dữ liệu mong muốn từ ResponseTokenDTO sang AuthResponse
         authRepository.signUp(signUpData).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Lấy token từ đối tượng AuthResponse
+                    // Đăng ký thành công, lưu token
                     String token = response.body().getToken();
                     saveToken(token);
-                    Toast.makeText(RegisterActivity.this, "Register successful", Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                    Toast.makeText(RegisterActivity.this, "Register successful! Please verify your email.", Toast.LENGTH_SHORT).show();
+
+                    // Chuyển sang màn hình xác thực email
+                    Intent intent = new Intent(RegisterActivity.this, VerifyEmailActivity.class);
+                    intent.putExtra("email", email); // Gửi email sang
+                    // Xóa tất cả activity cũ và bắt đầu task mới
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(RegisterActivity.this, "Sign Up failed. Email or username might already exist.", Toast.LENGTH_SHORT).show();
+                    btnSignUp.setEnabled(true);
+                    btnSignUp.setText("Register");
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
                 Toast.makeText(RegisterActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                btnSignUp.setEnabled(true);
+                btnSignUp.setText("Register");
             }
         });
     }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    android:background="@drawable/background"
+    tools:context=".view.VerifyEmailActivity">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo_no_text"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify Your Email"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/tvVerifyMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="An OTP has been sent to your email. Please enter it below."
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="@color/on_surface_variant"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter 6-digit OTP"
+        style="@style/Widget.Knowva.FilledInput">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtOtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="6"
+            android:textSize="18sp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btnVerify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Verify &amp; Continue"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvResendOtp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resend OTP"
+        android:textColor="@color/primary"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

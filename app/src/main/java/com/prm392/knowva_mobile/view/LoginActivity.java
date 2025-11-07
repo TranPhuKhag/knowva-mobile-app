@@ -26,7 +26,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText edtEmail, edtPassword;
     private Button btnLogin;
-    private TextView tvRegister;
+    private TextView tvRegister; // Đây là "Forgot Password"
+    private TextView tvGoToRegister;
     private AuthRepository authRepository;
     private SessionManager sessionManager;
 
@@ -37,14 +38,19 @@ public class LoginActivity extends AppCompatActivity {
 
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
-        tvRegister = findViewById(R.id.txtRegister);
+        tvRegister = findViewById(R.id.txtRegister); // "Forgot password"
         btnLogin = findViewById(R.id.btnLogin);
+        tvGoToRegister = findViewById(R.id.tvGoToRegister);
 
         sessionManager = new SessionManager(getApplicationContext());
 
         authRepository = new AuthRepository(this);
 
         tvRegister.setOnClickListener(v -> {
+            Toast.makeText(LoginActivity.this, "Chức năng quên mật khẩu sắp có!", Toast.LENGTH_SHORT).show();
+        });
+
+        tvGoToRegister.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
@@ -71,14 +77,6 @@ public class LoginActivity extends AppCompatActivity {
                     String token = authResponse.getToken();
                     sessionManager.saveAuthToken(token);
                     fetchUserProfileAndProceed();
-//                    User user = authResponse.getUser();
-//                    // Lấy token từ đối tượng AuthResponse
-//                    String token = response.body().getToken();
-//                    saveUserInfo(token, user);
-//                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-//                    startActivity(intent);
-//                    finish();
                 } else {
                     Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_SHORT).show();
                 }
@@ -91,47 +89,42 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-//    private void saveUserInfo(String token, User user) {
-//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//
-//        // Lưu token
-//        editor.putString("access_token", token);
-//
-//        // Lưu thêm thông tin của User (nếu user không null)
-//        if (user != null) {
-//            editor.putString("user_name", user.getUsername());
-//            editor.putString("user_email", user.getEmail());
-//            // Bạn có thể lưu thêm bất kỳ thông tin nào khác từ User object
-//        }
-//        editor.apply();
-//    }
-
-    // --- HÀM MỚI ĐỂ LẤY PROFILE ---
     private void fetchUserProfileAndProceed() {
         authRepository.getUserProfile().enqueue(new Callback<UserProfileResponse>() {
             @Override
             public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
-                UserProfileResponse profile = null; // Khởi tạo là null
+                UserProfileResponse profile = null;
                 if (response.isSuccessful() && response.body() != null) {
-                    profile = response.body(); // Lấy profile nếu thành công
+                    profile = response.body();
+                    sessionManager.saveUserProfile(profile);
+
+                    // --- LOGIC ĐIỀU HƯỚNG MỚI ---
+                    if (profile.isVerified()) {
+                        // 1. Đã xác thực -> Vào Home
+                        goToHomeActivity();
+                    } else {
+                        // 2. Chưa xác thực -> Vào màn hình Verify
+                        goToVerifyActivity(profile.getEmail());
+                    }
+                    // --- KẾT THÚC LOGIC MỚI ---
+
                 } else {
                     Log.e("LoginActivity", "Failed to fetch profile: " + response.code());
+                    sessionManager.saveUserProfile(null);
+                    goToHomeActivity(); // Failsafe: Vẫn cho vào home
                 }
-                // Luôn gọi saveUserProfile, kể cả khi profile là null
-                sessionManager.saveUserProfile(profile);
-                goToHomeActivity(); // Chuyển sang Home
             }
 
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
                 Log.e("LoginActivity", "Network error fetching profile: " + t.getMessage());
-                sessionManager.saveUserProfile(null); // Lưu giá trị mặc định/null
-                goToHomeActivity(); // Chuyển sang Home
+                sessionManager.saveUserProfile(null);
+                goToHomeActivity(); // Failsafe: Vẫn cho vào home
             }
         });
     }
 
+    // --- HÀM ĐIỀU HƯỚNG (GIỮ NGUYÊN) ---
     private void goToHomeActivity() {
         Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
@@ -140,4 +133,13 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    // --- HÀM ĐIỀU HƯỚNG MỚI ---
+    private void goToVerifyActivity(String email) {
+        Toast.makeText(LoginActivity.this, "Please verify your email.", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(LoginActivity.this, VerifyEmailActivity.class);
+        intent.putExtra("email", email);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
 }
