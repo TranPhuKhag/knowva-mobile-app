@@ -18,6 +18,7 @@ import com.prm392.knowva_mobile.R;
 import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.repository.FlashcardRepository;
 import com.prm392.knowva_mobile.view.HomeActivity;
+import com.prm392.knowva_mobile.view.quiz.QuizBottomSheet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -75,8 +76,8 @@ public class MyFlashcardsActivity extends AppCompatActivity {
                 return false;
             }
             if (id == R.id.menu_bottom_quiz) {
-                Toast.makeText(this, "Quiz", Toast.LENGTH_SHORT).show();
-                return true;
+                new QuizBottomSheet().show(getSupportFragmentManager(), "QuizBottomSheet");
+                return false;
             }
             return false;
         });
