@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.prm392.knowva_mobile.factory.APIClient;
 import com.prm392.knowva_mobile.model.FlashcardSet;
+import com.prm392.knowva_mobile.model.request.ExamSubmitRequest;
+import com.prm392.knowva_mobile.model.response.ExamResultResponse;
 import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.service.FlashcardService;
 import com.prm392.knowva_mobile.view.flashcard.model.CreateSetRequest;
@@ -43,5 +45,9 @@ public class FlashcardRepository {
 
     public Call<FlashcardSet> updateSet(long id, UpdateSetRequest body) {
         return service.updateSet(id, body);
+    }
+
+    public Call<ExamResultResponse> submitExam(long setId, long flashcardId, String answer) {
+        return service.submitExamAnswer(setId, new ExamSubmitRequest(flashcardId, answer));
     }
 }

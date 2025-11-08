@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -41,6 +42,8 @@ public class FlashcardViewerActivity extends AppCompatActivity {
     private long setId;
     private boolean isOwner;
     private FlashcardSet currentSet;
+    private MaterialButton btnExamMode;
+    private List<Flashcard> currentCards;
 
     private final ActivityResultLauncher<Intent> editLauncher =
         registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -71,13 +74,14 @@ public class FlashcardViewerActivity extends AppCompatActivity {
         tvTerms = findViewById(R.id.tvTerms);
         rvTerms = findViewById(R.id.rvTerms);
         rvTerms.setLayoutManager(new LinearLayoutManager(this));
-        rvTerms.setItemAnimator(null); // tránh flicker khi highlight
+        rvTerms.setItemAnimator(null);
+
+        btnExamMode = findViewById(R.id.btnExamMode);
 
         repo = new FlashcardRepository(this);
         setId = getIntent().getLongExtra("set_id", -1);
         isOwner = getIntent().getBooleanExtra("is_owner", false);
 
-        // Nhận meta từ Intent
         String title = getIntent().getStringExtra("set_title");
         String username = getIntent().getStringExtra("set_username");
         int terms = getIntent().getIntExtra("set_terms", -1);
@@ -86,7 +90,6 @@ public class FlashcardViewerActivity extends AppCompatActivity {
         if (username != null) tvUsername.setText(username);
         if (terms >= 0) tvTerms.setText(terms + " terms");
 
-        // Menu click listener
         tb.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.menu_more) {
                 openOwnerBottomSheet();
@@ -95,7 +98,9 @@ public class FlashcardViewerActivity extends AppCompatActivity {
             return false;
         });
 
-        // 1) Nếu có truyền kèm JSON cards -> dùng luôn
+        // Exam Mode button click listener
+        btnExamMode.setOnClickListener(v -> openExamMode());
+
         String json = getIntent().getStringExtra("cards_json");
         if (json != null && !json.isEmpty()) {
             List<MyFlashcardSetResponse.Card> cards = new Gson().fromJson(json,
@@ -104,7 +109,6 @@ public class FlashcardViewerActivity extends AppCompatActivity {
             return;
         }
 
-        // 2) Nếu không -> gọi API theo id
         if (setId > 0) {
             repo.getSetById(setId, new Callback<FlashcardSet>() {
                 @Override
@@ -130,6 +134,18 @@ public class FlashcardViewerActivity extends AppCompatActivity {
         } else {
             finish();
         }
+    }
+
+    private void openExamMode() {
+        if (currentCards == null || currentCards.isEmpty()) {
+            Toast.makeText(this, "No flashcards available for exam", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, ExamModeActivity.class);
+        intent.putExtra("set_id", setId);
+        intent.putExtra("cards_json", new Gson().toJson(currentCards));
+        startActivity(intent);
     }
 
     private void openOwnerBottomSheet() {
@@ -179,10 +195,8 @@ public class FlashcardViewerActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> res) {
                 if (res.isSuccessful()) {
                     Toast.makeText(FlashcardViewerActivity.this, "Set deleted successfully", Toast.LENGTH_SHORT).show();
-
                     Intent data = new Intent().putExtra("deleted_set_id", setId);
                     setResult(RESULT_OK, data);
-
                     finish();
                 } else {
                     String msg = "Delete failed (" + res.code() + ")";
@@ -190,7 +204,6 @@ public class FlashcardViewerActivity extends AppCompatActivity {
                     else if (res.code() == 403) msg = "Forbidden - You don't have permission";
                     else if (res.code() == 404) msg = "Set not found";
                     else if (res.code() >= 500) msg = "Server error - Please try again later";
-
                     Toast.makeText(FlashcardViewerActivity.this, msg, Toast.LENGTH_LONG).show();
                 }
             }
@@ -225,27 +238,16 @@ public class FlashcardViewerActivity extends AppCompatActivity {
             return;
         }
 
-        // ViewPager
+        currentCards = cards;
+
         FlashcardPagerAdapter pagerAdapter = new FlashcardPagerAdapter(cards);
         vp.setAdapter(pagerAdapter);
         vp.setOffscreenPageLimit(1);
-        new TabLayoutMediator(tabDots, vp, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@androidx.annotation.NonNull TabLayout.Tab tab, int position) {
-                // Empty - chỉ dùng dots
-            }
-        }).attach();
+        new TabLayoutMediator(tabDots, vp, (tab, position) -> {}).attach();
 
-        // RecyclerView "Terms"
-        termsAdapter = new TermsAdapter(cards, new TermsAdapter.OnItemClick() {
-            @Override
-            public void onClick(int position) {
-                vp.setCurrentItem(position, true);
-            }
-        });
+        termsAdapter = new TermsAdapter(cards, position -> vp.setCurrentItem(position, true));
         rvTerms.setAdapter(termsAdapter);
 
-        // Đồng bộ highlight & auto-scroll
         vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
