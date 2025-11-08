@@ -1,6 +1,8 @@
 package com.prm392.knowva_mobile.service;
 
 import com.prm392.knowva_mobile.model.FlashcardSet;
+import com.prm392.knowva_mobile.model.request.ExamSubmitRequest;
+import com.prm392.knowva_mobile.model.response.ExamResultResponse;
 import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
 import com.prm392.knowva_mobile.view.flashcard.model.CreateSetRequest;
 import com.prm392.knowva_mobile.view.flashcard.model.UpdateSetRequest;
@@ -35,5 +37,11 @@ public interface FlashcardService {
     Call<FlashcardSet> updateSet(
         @Path("id") long id,
         @Body UpdateSetRequest body
+    );
+
+    @POST("flashcard-sets/{flashcardSetId}/exam-mode/submit")
+    Call<ExamResultResponse> submitExamAnswer(
+        @Path("flashcardSetId") long flashcardSetId,
+        @Body ExamSubmitRequest body
     );
 }

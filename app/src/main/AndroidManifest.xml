@@ -41,6 +41,9 @@
         <activity android:name=".view.flashcard.EditFlashcardSetActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".view.flashcard.ExamModeActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".view.ProfileActivity" />
         <activity android:name=".view.quiz.MyQuizzesActivity" />
         <activity
