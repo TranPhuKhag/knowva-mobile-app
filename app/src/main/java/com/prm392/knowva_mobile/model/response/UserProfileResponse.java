@@ -3,6 +3,7 @@ package com.prm392.knowva_mobile.model.response;
 public class UserProfileResponse {
     private long id;
     private String fullName;
+    private String username;    // Thêm username
     private String phoneNumber; // Thêm
     private String birthdate;   // Thêm
     private String gender;      // Thêm
@@ -16,6 +17,7 @@ public class UserProfileResponse {
     // --- Getters ---
     public long getId() { return id; }
     public String getFullName() { return fullName; }
+    public String getUsername() { return username; }  // Thêm getter
     public String getPhoneNumber() { return phoneNumber; }
     public String getBirthdate() { return birthdate; }
     public String getGender() { return gender; }
