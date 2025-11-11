@@ -23,9 +23,10 @@ public class APIClient {
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .callTimeout(90, TimeUnit.SECONDS)
-                .readTimeout(90, TimeUnit.SECONDS)
-                .writeTimeout(90, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)      // THÊM connectTimeout
+                .callTimeout(30, TimeUnit.SECONDS)         // Giảm từ 90s xuống 30s
+                .readTimeout(30, TimeUnit.SECONDS)         // Giảm từ 90s xuống 30s
+                .writeTimeout(30, TimeUnit.SECONDS)        // Giảm từ 90s xuống 30s
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(new AuthInterceptor(context))
                 .build();

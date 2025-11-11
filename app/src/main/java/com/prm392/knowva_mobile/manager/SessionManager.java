@@ -10,6 +10,7 @@ public class SessionManager {
     // --- Thêm các Key mới ---
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER_FULL_NAME = "user_full_name";
+    private static final String KEY_USER_USERNAME = "user_username";
     private static final String KEY_USER_EMAIL = "user_email";
     private static final String KEY_USER_PHONE = "user_phone";
     private static final String KEY_USER_BIRTHDATE = "user_birthdate";
@@ -64,6 +65,7 @@ public class SessionManager {
             editor.putString(KEY_USER_FULL_NAME, profile.getFullName());
             editor.putString(KEY_USER_EMAIL, profile.getEmail());
             editor.putString(KEY_USER_PHONE, profile.getPhoneNumber());
+            editor.putString(KEY_USER_USERNAME, profile.getUsername());
             editor.putString(KEY_USER_BIRTHDATE, profile.getBirthdate());
             editor.putString(KEY_USER_GENDER, profile.getGender());
             editor.putString(KEY_USER_AVATAR_URL, profile.getAvatarUrl());
@@ -103,6 +105,7 @@ public class SessionManager {
     public long getUserId() { return sharedPreferences.getLong(KEY_USER_ID, -1); }
     public String getFullName() { return sharedPreferences.getString(KEY_USER_FULL_NAME, "Người dùng"); }
     public String getEmail() { return sharedPreferences.getString(KEY_USER_EMAIL, ""); }
+    public String getUsername() { return sharedPreferences.getString(KEY_USER_USERNAME, ""); }
     public String getPhoneNumber() { return sharedPreferences.getString(KEY_USER_PHONE, null); }
     public String getBirthdate() { return sharedPreferences.getString(KEY_USER_BIRTHDATE, null); }
     public String getGender() { return sharedPreferences.getString(KEY_USER_GENDER, null); }

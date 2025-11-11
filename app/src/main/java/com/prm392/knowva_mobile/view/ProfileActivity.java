@@ -1,7 +1,10 @@
 package com.prm392.knowva_mobile.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -9,11 +12,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.text.TextUtils;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.prm392.knowva_mobile.R;
 import com.prm392.knowva_mobile.model.response.UserProfileResponse;
@@ -29,10 +35,21 @@ import retrofit2.Response;
 public class ProfileActivity extends AppCompatActivity {
 
     private ImageView ivAvatar;
+    private TextView tvFullName, tvEmail, tvPhone, tvBirthdate, tvGender, tvVerified, tvRole, tvVip;
+    private TextView tvFcSets, tvQSets, tvFcAttempts, tvQAttempts, tvAvgScore;
     private TextInputEditText etFullName, etEmail, etPhone;
     private ProgressBar progressBar;
     private AuthRepository authRepository;
     private SessionManager sessionManager;
+
+    // Activity result launcher để nhận kết quả từ UpdateProfileActivity
+    private final ActivityResultLauncher<Intent> updateProfileLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                // Reload data sau khi update thành công
+                loadProfileData();
+            }
+        });
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,21 +69,25 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         // Ánh xạ View
-        ImageView ivAvatar = findViewById(R.id.iv_profile_avatar);
-        TextView tvFullName = findViewById(R.id.tv_profile_fullname);
-        TextView tvEmail = findViewById(R.id.tv_profile_email);
-        TextView tvPhone = findViewById(R.id.tv_profile_phone);
-        TextView tvBirthdate = findViewById(R.id.tv_profile_birthdate);
-        TextView tvGender = findViewById(R.id.tv_profile_gender);
-        TextView tvVerified = findViewById(R.id.tv_profile_verified);
-        TextView tvRole = findViewById(R.id.tv_profile_role);
-        TextView tvVip = findViewById(R.id.tv_profile_vip);
-        TextView tvFcSets = findViewById(R.id.tv_stats_fc_sets);
-        TextView tvQSets = findViewById(R.id.tv_stats_q_sets);
-        TextView tvFcAttempts = findViewById(R.id.tv_stats_fc_attempts);
-        TextView tvQAttempts = findViewById(R.id.tv_stats_q_attempts);
-        TextView tvAvgScore = findViewById(R.id.tv_stats_avg_score);
+        ivAvatar = findViewById(R.id.iv_profile_avatar);
+        tvFullName = findViewById(R.id.tv_profile_fullname);
+        tvEmail = findViewById(R.id.tv_profile_email);
+        tvPhone = findViewById(R.id.tv_profile_phone);
+        tvBirthdate = findViewById(R.id.tv_profile_birthdate);
+        tvGender = findViewById(R.id.tv_profile_gender);
+        tvVerified = findViewById(R.id.tv_profile_verified);
+        tvRole = findViewById(R.id.tv_profile_role);
+        tvVip = findViewById(R.id.tv_profile_vip);
+        tvFcSets = findViewById(R.id.tv_stats_fc_sets);
+        tvQSets = findViewById(R.id.tv_stats_q_sets);
+        tvFcAttempts = findViewById(R.id.tv_stats_fc_attempts);
+        tvQAttempts = findViewById(R.id.tv_stats_q_attempts);
+        tvAvgScore = findViewById(R.id.tv_stats_avg_score);
 
+        loadProfileData();
+    }
+
+    private void loadProfileData() {
         // --- Lấy và hiển thị dữ liệu từ SessionManager ---
         tvFullName.setText(formatField("Họ tên", sessionManager.getFullName()));
         tvEmail.setText(formatField("Email", sessionManager.getEmail()));
@@ -94,6 +115,39 @@ public class ProfileActivity extends AppCompatActivity {
                 .into(ivAvatar);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_update_profile) {
+            openProfileBottomSheet();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void openProfileBottomSheet() {
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_profile, null, false);
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(view);
+
+        view.findViewById(R.id.tv_update_profile).setOnClickListener(v -> {
+            dialog.dismiss();
+            openUpdateProfile();
+        });
+
+        dialog.show();
+    }
+
+    private void openUpdateProfile() {
+        Intent intent = new Intent(this, UpdateProfileActivity.class);
+        updateProfileLauncher.launch(intent);
+    }
+
     // Hàm helper để định dạng và xử lý giá trị null/rỗng
     private String formatField(String label, String value) {
         return String.format("%s: %s", label, TextUtils.isEmpty(value) ? "N/A" : value);
@@ -107,37 +161,34 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void fetchUserProfile() {
-        progressBar.setVisibility(View.VISIBLE); // Hiển thị loading
+        progressBar.setVisibility(View.VISIBLE);
 
         authRepository.getUserProfile().enqueue(new Callback<UserProfileResponse>() {
             @Override
             public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
-                progressBar.setVisibility(View.GONE); // Ẩn loading
+                progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
                     displayProfile(response.body());
                 } else {
-                    // Xử lý lỗi
                     String errorMsg = "Không thể tải hồ sơ: " + response.code();
                     try {
                         if (response.errorBody() != null) {
                             errorMsg += "\n" + response.errorBody().string();
                         }
-                    } catch (Exception e) { /* Ignore */ }
+                    } catch (Exception e) {
+                        // Ignore
+                    }
                     Log.e("ProfileActivity", errorMsg);
                     Toast.makeText(ProfileActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-                    // Có thể đóng Activity nếu không tải được profile
-                    // finish();
                 }
             }
 
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
-                progressBar.setVisibility(View.GONE); // Ẩn loading
+                progressBar.setVisibility(View.GONE);
                 Log.e("ProfileActivity", "Lỗi mạng khi tải hồ sơ: " + t.getMessage(), t);
                 Toast.makeText(ProfileActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                // Có thể đóng Activity nếu không tải được profile
-                // finish();
             }
         });
     }
@@ -145,7 +196,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void displayProfile(UserProfileResponse profile) {
         etFullName.setText(profile.getFullName());
         etEmail.setText(profile.getEmail());
-        // etPhone.setText(profile.getPhoneNumber()); // Cần thêm getPhoneNumber() vào model nếu API trả về
 
         Glide.with(this)
                 .load(profile.getAvatarUrl())

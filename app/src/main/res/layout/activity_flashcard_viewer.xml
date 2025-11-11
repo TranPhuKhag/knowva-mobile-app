@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface">
+    android:background="@drawable/background">
 
     <!-- Toolbar: chỉ nút back -->
     <com.google.android.material.appbar.MaterialToolbar
@@ -87,6 +87,26 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Button Exam Mode - Style đẹp hơn -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExamMode"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="📝 Exam Mode"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="start"
+                app:cornerRadius="12dp"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:backgroundTint="@color/primary"
+                android:textColor="@color/on_primary"
+                android:elevation="4dp"/>
+
             <!-- Divider nhẹ -->
             <View
                 android:layout_width="match_parent"
@@ -123,3 +143,4 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

@@ -10,4 +10,12 @@
     <string name="forgot_password">Forgot password</string>
 
     <string name="go_to_register">Don\'t have an account? <b>Register</b></string>
+
+    <!-- Register Screen -->
+    <string name="register_title">Sign up</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="register">Sign up</string>
+    <string name="already_have_account">Already have an account? <b>Log in</b></string>
 </resources>
