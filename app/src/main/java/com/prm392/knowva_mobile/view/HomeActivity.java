@@ -25,6 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.prm392.knowva_mobile.R;
 import com.prm392.knowva_mobile.manager.SessionManager;
 import com.prm392.knowva_mobile.model.response.MyFlashcardSetResponse;
+import com.prm392.knowva_mobile.model.response.UserProfileResponse;
 import com.prm392.knowva_mobile.repository.AuthRepository;
 import com.prm392.knowva_mobile.repository.HomeRepository;
 import com.prm392.knowva_mobile.view.Home.HomeAdapter;
@@ -39,6 +40,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import com.prm392.knowva_mobile.view.quiz.QuizBottomSheet;
 import com.prm392.knowva_mobile.model.response.quiz.MyQuizSetResponse;
+import android.net.Uri;
+import com.prm392.knowva_mobile.repository.PaymentRepository;
+import com.prm392.knowva_mobile.model.response.PaymentResponse;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -52,6 +56,7 @@ public class HomeActivity extends AppCompatActivity {
     private ActionBarDrawerToggle toggle;
     private SessionManager sessionManager;
     private List<HomeScreenItem> baseHomeItems;
+    private PaymentRepository paymentRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +65,8 @@ public class HomeActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(this);
         authRepository = new AuthRepository(this);
+        paymentRepository = new PaymentRepository(this);
+        homeRepository = new HomeRepository(this);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -81,6 +88,8 @@ public class HomeActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
+            } else if (itemId == R.id.nav_vip) {
+                handleVipUpgrade();
             } else if (itemId == R.id.nav_logout) {
                 performLogout();
             }
@@ -88,7 +97,6 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
 
-        homeRepository = new HomeRepository(this);
         setupRecyclerView();
         loadData();
 
@@ -119,6 +127,84 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     finish();
                 }
+            }
+        });
+    }
+
+    //Sửa ở đây nèeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // Hàm này sẽ được gọi khi app quay về từ Deep Link
+        handleDeepLink(intent);
+    }
+
+    private void handleDeepLink(Intent intent) {
+        Uri data = intent.getData();
+        if (data != null && "knowva".equals(data.getScheme()) && "payment".equals(data.getHost())) {
+            String path = data.getPath(); // Sẽ là "/success" hoặc "/fail"
+
+            if ("/success".equals(path)) {
+                // Thanh toán thành công!
+                Toast.makeText(this, "Thanh toán thành công! Đang cập nhật trạng thái...", Toast.LENGTH_LONG).show();
+                // Chủ động gọi API để lấy thông tin user mới (đã là VIP)
+                fetchUserProfileAndUpdateSession();
+            } else if ("/fail".equals(path)) {
+                // Thanh toán thất bại
+                Toast.makeText(this, "Thanh toán đã bị hủy hoặc thất bại.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
+    private void fetchUserProfileAndUpdateSession() {
+        authRepository.getUserProfile().enqueue(new Callback<UserProfileResponse>() {
+            @Override
+            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    sessionManager.saveUserProfile(response.body());
+                    Toast.makeText(HomeActivity.this, "Chào mừng bạn đến với VIP!", Toast.LENGTH_SHORT).show();
+                    // Cập nhật lại Nav Header (nếu cần)
+                    updateNavHeader();
+                } else {
+                    Toast.makeText(HomeActivity.this, "Lỗi cập nhật profile sau thanh toán.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
+                Toast.makeText(HomeActivity.this, "Lỗi mạng khi cập nhật profile.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    //===================================================
+
+    private void handleVipUpgrade() {
+        long userId = sessionManager.getUserId();
+        if (userId == -1) {
+            Toast.makeText(this, "Lỗi: Không tìm thấy User ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, "Đang tạo link thanh toán...", Toast.LENGTH_SHORT).show();
+
+        paymentRepository.createPaymentLink(userId).enqueue(new Callback<PaymentResponse>() {
+            @Override
+            public void onResponse(Call<PaymentResponse> call, Response<PaymentResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getCheckoutUrl() != null) {
+                    String url = response.body().getCheckoutUrl();
+                    // Mở URL bằng trình duyệt mặc định của điện thoại
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);                           //Sửa ở đây nèeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+                    startActivity(browserIntent);
+                } else {
+                    Toast.makeText(HomeActivity.this, "Tạo link thất bại: " + response.code(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PaymentResponse> call, Throwable t) {
+                Toast.makeText(HomeActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
