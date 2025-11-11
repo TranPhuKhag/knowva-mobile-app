@@ -31,7 +31,23 @@
         <activity
             android:name=".view.VerifyEmailActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".view.HomeActivity" />
+
+<!--        Sửa ở đây nèeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-->
+        <activity
+            android:name=".view.HomeActivity"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="knowva"
+                    android:host="payment" />
+            </intent-filter>
+        </activity>
+<!--        ========================================-->
+
         <activity android:name=".view.flashcard.MyFlashcardsActivity" />
         <activity android:name=".view.flashcard.FlashcardViewerActivity"
             android:exported="false"
